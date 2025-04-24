@@ -45,14 +45,28 @@ RPCHelpMan signmessage()
             std::string strAddress = request.params[0].get_str();
             std::string strMessage = request.params[1].get_str();
 
-            CTxDestination dest = DecodeDestination(strAddress);
+            // Decode destination (supports PQC v2 and legacy PKH)
+            std::string error_msg;
+            std::vector<int> error_locations;
+            CTxDestination dest = DecodeDestination(strAddress, error_msg, &error_locations);
             if (!IsValidDestination(dest)) {
-                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "Invalid address");
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, error_msg.empty() ? "Invalid address" : error_msg);
             }
 
+            // Handle PQC v2 addresses
+            if (auto pw = std::get_if<WitnessUnknown>(&dest); pw && pw->GetWitnessVersion() == 2) {
+                // Sign with PQC keystore
+                const auto& keystore = pwallet->GetPQCKeyStore();
+                std::string signature;
+                if (!keystore.SignMessage(strAddress, strMessage, signature)) {
+                    throw JSONRPCError(RPC_WALLET_ERROR, "PQC signing failed");
+                }
+                return signature;
+            }
+            // Legacy PKHash addresses
             const PKHash* pkhash = std::get_if<PKHash>(&dest);
             if (!pkhash) {
-                throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to key");
+                throw JSONRPCError(RPC_TYPE_ERROR, "Address does not refer to supported key type");
             }
 
             std::string signature;

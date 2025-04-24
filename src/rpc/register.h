@@ -40,6 +40,8 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable &t)
     RegisterSignerRPCCommands(t);
 #endif // ENABLE_EXTERNAL_SIGNER
     RegisterTxoutProofRPCCommands(t);
+    // Register Post-Quantum Cryptography RPC commands (Dilithium3)
+    RegisterPQCCommands(t);
 }
 
 #endif // BITCOIN_RPC_REGISTER_H

@@ -4,11 +4,11 @@ QuBitcoin Tech Stack & Decisions:
 Signature Algorithm: CRYSTALS-Dilithium (replaces ECDSA)
 Hash Algorithm: BLAKE3 (replaces SHA256/SHA256d)
 Consensus: Proof-of-Work based on BLAKE3
-Activation: Mandatory Hard Fork at FORK_HEIGHT
 Address Format: New Bech32m format (qbc1p...) using BLAKE3 hashes of Dilithium public keys
 HD Wallets: New Dilithium/BLAKE3-compatible derivation scheme
 Block/Transaction Structure: increased to 111 000 000 to accommodate Dilithium signature sizes and use BLAKE3 hashes
-Network Protocol: Incremented version, new service bit (NODE_PQ), distinct magic bytes
+Network Protocol: Incremented version, new service bit (NODE_PQ), distinct magic bytes.
+COMPLETELY NEW BLOCKCHAIN NO MIGRATION
 
  The emergence of practical quantum computation represents not merely a threat, but a fundamental invalidation of the security model underpinning legacy Bitcoin. Shor's algorithm renders the elliptic curve cryptography, upon which control of ownership rests, demonstrably obsolete. Grover's algorithm erodes the already marginal security guarantees of hash-based Proof-of-Work against a sufficiently advanced adversary. A purely peer-to-peer system of electronic cash, intended for enduring value, cannot be built upon cryptographic foundations known to be fragile. QuBitcoin is presented not merely as an evolution, but as the necessary successor: a fork preserving Bitcoin's core principles but rebuilt on cryptographic primitives resistant to the known capabilities of quantum computation. Through the systematic replacement of ECDSA with CRYSTALS-Dilithium and SHA256d with BLAKE3, QuBitcoin ensures the continued viability of decentralized digital scarcity. This document specifies the rationale and mechanics of this essential transition.
 
@@ -89,3 +89,40 @@ Network Protocol: Incremented version, new service bit (NODE_PQ), distinct magic
     – Functional test: craft a minimal CBlock with dummy coinbase, signature it against
     a test key, run through CheckBlock() with fCheckPOW=false/fCheckMerkleRoot=false
     (but fCheckPOW=true so we hit signature‐verify path), assert acceptance.
+
+
+
+
+
+Launch Protocol – First Principles
+	1.	Immutable Genesis
+	•	Offline: generate Dilithium key-pair → compute BLAKE3(pubkey) → embed in block 0.
+	•	Fix supply curve & consensus params in block header.
+	•	Hash of genesis + full build tag published beforehand for reproducible verification.
+	2.	Code Freeze & Deterministic Builds
+	•	Tag v1.0.0.
+	•	Rebuild client in clean containers for Linux/macOS/Windows; publish SHA256 + BLAKE3 checksums.
+	•	Include CLI wallet + mining daemon.
+	3.	Seed & Bootstrap
+	•	Bring up ≥ 7 geographically diverse seed nodes (NODE_PQ bit set, distinct magic bytes).
+	•	Hard-code their Dilithium pubkeys + IPs in release.
+	4.	Public Key Infrastructure
+	•	Release HD-wallet BIP-style spec (Dilithium-BLAKE3 path derivation).
+	•	Provide reference JS/Rust libs for address validation (qbc1p…).
+	5.	Mining Start Signal
+	•	T-0 = UTC timestamp announced 48 h in advance.
+	•	At T-0 clients un-lock mining; first valid block after genesis defines chain tip.
+	6.	Security & Audit
+	•	90-day bug bounty (critical = 50 000 QBC).
+	•	Independent cryptographers audit Dilithium implementation, PoW difficulty adjuster, networking.
+	7.	Exchange / Custody Coordination
+	•	Hand off build hashes, address format doc, and watch-only wallet code to exchanges 1 week pre-launch.
+	•	Cold-storage guide for hardware vendors.
+	8.	Monitoring & Emergency Switches
+	•	Real-time telemetry dashboard (block time, orphan rate).
+	•	Pre-agreed soft-fork flag to throttle block size if fork risk detected.
+	9.	Comms
+	•	One signed post on https://qbitcoin.org/launch only. No social chatter.
+	•	All binaries and docs mirrored to IPFS + signed torrent.
+
+Launch is deterministic, verifiable, and requires no legacy migration.

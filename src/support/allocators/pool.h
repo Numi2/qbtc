@@ -1,6 +1,4 @@
-//   2022 
-//    
-//  
+// src/support/allocators/pool.h
 
 #ifndef BITCOIN_SUPPORT_ALLOCATORS_POOL_H
 #define BITCOIN_SUPPORT_ALLOCATORS_POOL_H

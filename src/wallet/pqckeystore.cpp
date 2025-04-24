@@ -1,5 +1,8 @@
 // Qubitcoin: HD key store for post-quantum Dilithium3 key derivation
 #include <wallet/pqckeystore.h>
+#include <key_io.h>
+#include <crypto/pqc_keys.h>
+#include <util/hash.h>
 #include <wallet/walletdb.h>
 #include <util/strencodings.h>
 #include <vector>
@@ -20,6 +23,44 @@ bool CPQCKeyStore::Load(WalletBatch& batch)
     } catch (...) {
         next_index = 0;
     }
+    // Load persisted PQC private keys and build address->privkey map
+    for (uint32_t i = 0; i < next_index; ++i) {
+        std::vector<unsigned char> priv_der;
+        if (batch.ReadIC(std::make_pair(DBKeys::PQCKEY, i), priv_der)) {
+            EVP_PKEY* pkey = nullptr;
+            try {
+                pkey = LoadDilithium3PrivateKey(priv_der.data(), priv_der.size());
+                std::vector<unsigned char> pub_der = ExportDilithium3PublicKey(pkey);
+                uint256 h = Blake3(std::span{pub_der.data(), pub_der.size()});
+                std::vector<unsigned char> program(h.begin(), h.end());
+                CTxDestination dest = WitnessUnknown{1, program};
+                std::string addr = EncodeDestination(dest);
+                m_address_priv_map[addr] = priv_der;
+            } catch (...) {
+                // skip invalid
+            }
+            if (pkey) EVP_PKEY_free(pkey);
+        }
+    }
+    return true;
+}
+// Sign a plain message with the PQC private key for a given address
+bool CPQCKeyStore::SignMessage(const std::string& address, const std::string& message, std::string& signature) const
+{
+    auto it = m_address_priv_map.find(address);
+    if (it == m_address_priv_map.end()) return false;
+    // Load private key
+    EVP_PKEY* pkey = nullptr;
+    try {
+        pkey = LoadDilithium3PrivateKey(it->second.data(), it->second.size());
+        auto sig = SignDilithium3(pkey,
+            reinterpret_cast<const unsigned char*>(message.data()), message.size());
+        signature = EncodeBase64(sig);
+    } catch (...) {
+        if (pkey) EVP_PKEY_free(pkey);
+        return false;
+    }
+    EVP_PKEY_free(pkey);
     return true;
 }
 
@@ -47,7 +88,7 @@ std::tuple<std::string, std::string, std::string> CPQCKeyStore::GetNewPQCAddress
     // Compute Bech32m v2 address from public key hash
     uint256 h = Blake3(std::span{pub_der.data(), pub_der.size()});
     std::vector<unsigned char> program(h.begin(), h.end());
-    CTxDestination dest = WitnessUnknown{2, program};
+    CTxDestination dest = WitnessUnknown{1, program};
     std::string address = EncodeDestination(dest);
 
     // Persist this keypair and bump index

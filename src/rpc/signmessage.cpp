@@ -41,6 +41,13 @@ static RPCHelpMan verifymessage()
             std::string strAddress = self.Arg<std::string>("address");
             std::string strSign = self.Arg<std::string>("signature");
             std::string strMessage = self.Arg<std::string>("message");
+            // PQC v2 verification unsupported (cannot recover public key from address hash)
+            std::string err;
+            std::vector<int> errloc;
+            CTxDestination dest = DecodeDestination(strAddress, err, &errloc);
+            if (auto pw = std::get_if<WitnessUnknown>(&dest); pw && pw->GetWitnessVersion() == 2) {
+                throw JSONRPCError(RPC_INVALID_ADDRESS_OR_KEY, "PQC message verification not supported");
+            }
 
             switch (MessageVerify(strAddress, strSign, strMessage)) {
             case MessageVerificationResult::ERR_INVALID_ADDRESS:
