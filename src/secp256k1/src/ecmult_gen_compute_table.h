@@ -1,6 +1,6 @@
 /***********************************************************************
- * Copyright (c) Pieter Wuille, Gregory Maxwell                        *
- * Distributed under the MIT software license, see the accompanying    *
+ *   Pieter Wuille, Gregory Maxwell                        *
+ *        *
  * file COPYING or https://www.opensource.org/licenses/mit-license.php.*
  ***********************************************************************/
 

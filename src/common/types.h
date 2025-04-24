@@ -1,6 +1,6 @@
-// Copyright (c) 2010-2021 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2010-2021 
+//    
+//  
 
 //! @file common/types.h is a home for simple enum and struct type definitions
 //! that can be used internally by functions in the libbitcoin_common library,

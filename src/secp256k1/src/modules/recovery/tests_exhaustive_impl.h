@@ -1,6 +1,6 @@
 /***********************************************************************
- * Copyright (c) 2016 Andrew Poelstra                                  *
- * Distributed under the MIT software license, see the accompanying    *
+ *   2016 Andrew Poelstra                                  *
+ *        *
  * file COPYING or https://www.opensource.org/licenses/mit-license.php.*
  ***********************************************************************/
 

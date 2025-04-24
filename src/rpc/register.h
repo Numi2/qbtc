@@ -1,6 +1,6 @@
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//     22 
+//    
+//  
 
 #ifndef BITCOIN_RPC_REGISTER_H
 #define BITCOIN_RPC_REGISTER_H
@@ -22,6 +22,8 @@ void RegisterRawTransactionRPCCommands(CRPCTable &tableRPC);
 void RegisterSignMessageRPCCommands(CRPCTable&);
 void RegisterSignerRPCCommands(CRPCTable &tableRPC);
 void RegisterTxoutProofRPCCommands(CRPCTable&);
+// Register Post-Quantum Cryptography (PQC) RPC commands (Dilithium3)
+void RegisterPQCCommands(CRPCTable&);
 
 static inline void RegisterAllCoreRPCCommands(CRPCTable &t)
 {

@@ -1,6 +1,6 @@
-// Copyright (c) 2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or https://www.opensource.org/licenses/mit-license.php.
+//   2022 
+//    
+ 
 
 #include <wallet/test/util.h>
 #include <wallet/wallet.h>
@@ -71,7 +71,8 @@ BOOST_FIXTURE_TEST_CASE(wallet_load_descriptors, TestingSetup)
     {
         // Write valid descriptor with invalid ID
         WalletBatch batch(*database, false);
-        std::string desc = "wpkh([d34db33f/84h/0h/0h]xpub6DJ2dNUysrn5Vt36jH2KLBT2i1auw1tTSSomg8PhqNiUtx8QX2SvC9nrHu81fT41fvDUnhMjEzQgXnQjKEu3oaqMSzhSrHMxyyoEAmUHQbY/0/*)#cjjspncu";
+        // Updated to post-quantum HD path: purpose 86'
+        std::string desc = "wpkh([d34db33f/86h/0h/0h]xpub6DJ2dNUysrn5Vt36jH2KLBT2i1auw1tTSSomg8PhqNiUtx8QX2SvC9nrHu81fT41fvDUnhMjEzQgXnQjKEu3oaqMSzhSrHMxyyoEAmUHQbY/0/*)#cjjspncu";
         WalletDescriptor wallet_descriptor(std::make_shared<DummyDescriptor>(desc), 0, 0, 0, 0);
         BOOST_CHECK(batch.WriteDescriptor(uint256::ONE, wallet_descriptor));
     }

@@ -1,0 +1,93 @@
+// Qubitcoin: HD key store for post-quantum Dilithium3 key derivation
+#include <wallet/pqckeystore.h>
+#include <wallet/walletdb.h>
+#include <util/strencodings.h>
+#include <vector>
+#include <util/time.h>
+#include <script/interpreter.h>
+#include <chainparams.h>
+#include <span>
+
+CPQCKeyStore::CPQCKeyStore(CWallet* _wallet) : wallet(_wallet), next_index(0) {}
+
+bool CPQCKeyStore::Load(WalletBatch& batch)
+{
+    // Load next index for HD PQC key derivation (if stored)
+    uint32_t idx = 0;
+    try {
+        batch.Read(DBKeys::PQCINDEX, idx);
+        next_index = idx;
+    } catch (...) {
+        next_index = 0;
+    }
+    return true;
+}
+
+std::tuple<std::string, std::string, std::string> CPQCKeyStore::GetNewPQCAddress()
+{
+    // Derive new Dilithium3 keypair via HD (BLAKE3-PRF(master_seed, index))
+    std::vector<unsigned char> seed = wallet->GetPqcSeed();
+    if (seed.empty()) throw std::runtime_error("PQC seed not set");
+    // Compute PRF output
+    blake3_hasher hasher;
+    blake3_hasher_init_keyed(&hasher, seed.data());
+    uint32_t idx = next_index;
+    uint32_t idx_be = htobe32(idx);
+    blake3_hasher_update(&hasher, reinterpret_cast<const uint8_t*>(&idx_be), sizeof(idx_be));
+    uint8_t out[BLAKE3_KEY_LEN];
+    blake3_hasher_finalize(&hasher, out, BLAKE3_KEY_LEN);
+    // Seed OpenSSL RNG for deterministic keygen
+    RAND_seed(out, BLAKE3_KEY_LEN);
+    EVP_PKEY* pkey = GenerateDilithium3Key();
+    std::vector<unsigned char> pub_der = ExportDilithium3PublicKey(pkey);
+    std::vector<unsigned char> priv_der = ExportDilithium3PrivateKey(pkey);
+    std::string pub_b64 = EncodeBase64(pub_der);
+    std::string priv_b64 = EncodeBase64(priv_der);
+
+    // Compute Bech32m v2 address from public key hash
+    uint256 h = Blake3(std::span{pub_der.data(), pub_der.size()});
+    std::vector<unsigned char> program(h.begin(), h.end());
+    CTxDestination dest = WitnessUnknown{2, program};
+    std::string address = EncodeDestination(dest);
+
+    // Persist this keypair and bump index
+    {
+        WalletBatch batch(wallet->GetDatabase());
+        batch.WriteIC(std::make_pair(DBKeys::PQCKEY, next_index), priv_der);
+        batch.WriteIC(DBKeys::PQCINDEX, next_index + 1);
+        next_index++;
+    }
+
+    EVP_PKEY_free(pkey);
+    return {address, pub_b64, priv_b64};
+}
+
+bool CPQCKeyStore::ImportPQCAddress(const std::string& address, const std::string& pubkey_b64, const std::string& privkey_b64)
+{
+    // Decode base64-encoded keys
+    std::vector<unsigned char> pub_der = DecodeBase64(pubkey_b64);
+    std::vector<unsigned char> priv_der = DecodeBase64(privkey_b64);
+    // Load private key
+    EVP_PKEY* pkey = nullptr;
+    try {
+        pkey = LoadDilithium3PrivateKey(priv_der.data(), priv_der.size());
+    } catch (...) {
+        return false;
+    }
+    // TODO: Persist this keypair
+
+    // Import address script to wallet
+    std::string err;
+    CTxDestination dest = DecodeDestination(address, Params(), err, nullptr);
+    if (!IsValidDestination(dest)) {
+        EVP_PKEY_free(pkey);
+        return false;
+    }
+    CScript script = GetScriptForDestination(dest);
+    WalletBatch batch(wallet->GetDatabase());
+    auto spk_man = wallet->GetOrCreateScriptPubKeyMan(batch, dest);
+    LOCK(spk_man->cs_KeyStore);
+    spk_man->ImportScripts({script}, /*have_solving_data=*/true, /*timestamp=*/GetTime());
+    EVP_PKEY_free(pkey);
+    return true;
+}

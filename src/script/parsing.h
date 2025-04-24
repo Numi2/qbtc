@@ -1,6 +1,6 @@
-// Copyright (c) 2018-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2018-present 
+//    
+//  
 
 #ifndef BITCOIN_SCRIPT_PARSING_H
 #define BITCOIN_SCRIPT_PARSING_H

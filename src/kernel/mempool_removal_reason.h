@@ -1,6 +1,6 @@
-// Copyright (c) 2016-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or https://opensource.org/license/mit/.
+//   2016-present 
+//    
+//  .
 
 #ifndef BITCOIN_KERNEL_MEMPOOL_REMOVAL_REASON_H
 #define BITCOIN_KERNEL_MEMPOOL_REMOVAL_REASON_H

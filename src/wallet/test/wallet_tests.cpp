@@ -1,6 +1,6 @@
-// Copyright (c) 2012-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2012-2022 
+//    
+//  
 
 #include <wallet/wallet.h>
 
@@ -45,6 +45,33 @@ static_assert(DEFAULT_TRANSACTION_MINFEE >= DEFAULT_MIN_RELAY_TX_FEE, "wallet mi
 static_assert(WALLET_INCREMENTAL_RELAY_FEE >= DEFAULT_INCREMENTAL_RELAY_FEE, "wallet incremental fee is smaller than default incremental relay fee");
 
 BOOST_FIXTURE_TEST_SUITE(wallet_tests, WalletTestingSetup)
+// Test that new HD derivation uses the quantum-safe path m/86'/coin_type'/0'/chain'/index' and yields correct address format
+BOOST_AUTO_TEST_CASE(quantum_safe_hdpath_and_address_format)
+{
+    // Create a legacy wallet (non-descriptor)
+    CWallet wallet(m_node.chain.get(), "", CreateMockableWalletDatabase());
+    // Get or create the legacy ScriptPubKey manager
+    auto& spk_man = *wallet.GetOrCreateLegacyScriptPubKeyMan();
+    LOCK(wallet.cs_wallet);
+    // External (receive) address
+    CTxDestination dest = getNewDestination(wallet, OutputType::BECH32);
+    // Check metadata hdKeypath
+    auto meta = spk_man.GetMetadata(dest);
+    BOOST_CHECK(meta);
+    // Expect purpose 86', coin_type 0' for mainnet, account 0', external chain (0), index 0
+    BOOST_CHECK_EQUAL(meta->hdKeypath, "m/86'/0'/0'/0'/0'");
+    // Address format should use the quantum-safe Bech32 HRP ("qb") and witness version 0
+    std::string addr = EncodeDestination(dest);
+    // HRP is defined by chainparams as "qb"
+    std::string hrp = Params().Bech32HRP();
+    BOOST_CHECK(addr.rfind(hrp + "1q", 0) == 0);
+    // Internal (change) address
+    CTxDestination dest_change = *Assert(wallet.GetNewChangeDestination(OutputType::BECH32));
+    auto meta_ch = spk_man.GetMetadata(dest_change);
+    BOOST_CHECK(meta_ch);
+    // Expect chain 1 (internal) and index 0
+    BOOST_CHECK_EQUAL(meta_ch->hdKeypath, "m/86'/0'/0'/1'/0'");
+}
 
 static CMutableTransaction TestSimpleSpend(const CTransaction& from, uint32_t index, const CKey& key, const CScript& pubkey)
 {

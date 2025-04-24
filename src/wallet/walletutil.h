@@ -1,6 +1,6 @@
-// Copyright (c) 2017-2021 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2017-2021 
+//    
+//  
 
 #ifndef BITCOIN_WALLET_WALLETUTIL_H
 #define BITCOIN_WALLET_WALLETUTIL_H

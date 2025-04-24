@@ -1,79 +1,145 @@
-Bitcoin Core integration/staging tree
-=====================================
+ Core Crypto & Build
+     • Vendor and wire up BLAKE3 and OpenSSL-OQS (Dilithium) in CMake.
+     • Remove any residual secp256k1/OpenSSL-SHA256 code paths.
+     • Add unit & fuzz tests for:
+       – CBlake3, CHash256/160, HashWriter, HMAC-BLAKE3 (BIP32)
+       – pqc_keys: Generate/Import/Export, Sign/Verify
 
-https://bitcoincore.org
+Consensus & PoW
+     • Switch all PoW hashing to single-round BLAKE3.
+     • Update difficulty adjustment (retarget) parameters around BLAKE3’s performance.
+     • Flesh out CheckProofOfWorkImpl with BLAKE3.
+     • Write unit tests for PoW / retarget logic.
 
-For an immediately usable, binary version of the Bitcoin Core software, see
-https://bitcoincore.org/en/download/.
+Block Header Signing
+     • Extend CBlockHeader to carry a Dilithium signature.
+     • Miner: once BLAKE3 PoW passes, sign the header with your Dilithium key.
+     • Validation: always enforce Dilithium signature + BLAKE3 PoW.
+     • Write block-signing and verification tests.
 
-What is Bitcoin Core?
----------------------
+ P2P & Network Protocol
+     • Bump PROTOCOL_VERSION, choose unique magic bytes, add NODE_PQ service bit.
+     • Serialize new header‐sig field in block, getheaders, headers messages.
+     • Update inv/getdata to advertise BLAKE3 block IDs.
+     • Test a two-node regtest network fully exchanging blocks/txs.
 
-Bitcoin Core connects to the Bitcoin peer-to-peer network to download and fully
-validate blocks and transactions. It also includes a wallet and graphical user
-interface, which can be optionally built.
+  Address Format & Scripts
+     • Define “qbc1p…” Bech32m address: BLAKE3(pubkey) as witness program.
+     • Reimplement scriptPubKey templates: P2WPKH-Dilithium, P2WSH.
+     • Rewire script interpreter & CScriptCheck to use Dilithium Verify.
+     • Adjust sigops cost for large PQ signatures; add tests for valid/invalid scripts.
 
-Further information about Bitcoin Core is available in the [doc folder](/doc).
 
-License
--------
+  Wallet & HD Key Derivation
+     • BIP-32-style tree using HMAC-BLAKE3: seed → Dilithium master key → child
+    keypairs.
+     • Define xprv/xpub (or simple hex) serialization for Dilithium keypaths.
+     • Complete wallet/pqckeystore: encrypt, backup, import, export PQ private keys.
+     • Wire all signing RPCs and PSBT flows to use pqc_keys.
+     • Write functional wallet tests: derive address, fund, sign, broadcast.
 
-Bitcoin Core is released under the terms of the MIT license. See [COPYING](COPYING) for more
-information or see https://opensource.org/licenses/MIT.
+    Genesis & Release
+     • Craft a new genesis block: find a BLAKE3-valid nonce and include a valid
+    Dilithium header-sig.
+     • Bake in mainnet/testnet/regtest params (magic bytes, seeds, checkpoints).
+     • CI & packaging: build with vendored libs, run full unit + functional + fuzz
+    suites.
+     • Docs & spec: BIP-style write-up for address/tx format, HD derivation, network
+    magic, mining guide.
+     • Publish a v1.0 “Qubitcoin Fresh-Start” release.
 
-Development Process
--------------------
+     I’ve stripped out the Bitcoin‐legacy protocol versioning and replaced it with a
+    clean “v1” handshake, and added a new quantum‐safe P2P flag:
 
-The `master` branch is regularly built (see `doc/build-*.md` for instructions) and tested, but it is not guaranteed to be
-completely stable. [Tags](https://github.com/bitcoin/bitcoin/tags) are created
-regularly from release branches to indicate new official, stable release versions of Bitcoin Core.
+    • In src/node/protocol_version.h
+      – PROTOCOL_VERSION, INIT_PROTO_VERSION, MIN_PEER_PROTO_VERSION, and all
+    feature‐version constants are now set to 1.
 
-The https://github.com/bitcoin-core/gui repository is used exclusively for the
-development of the GUI. Its master branch is identical in all monotree
-repositories. Release branches and tags do not exist, so please do not fork
-that repository unless it is for development reasons.
+    • In src/protocol.h
+      – Added NODE_PQ service flag (1<<12) for quantum‐safe support
+      – SeedsServiceFlags() now advertises NODE_NETWORK|NODE_PQ only
 
-The contribution workflow is described in [CONTRIBUTING.md](CONTRIBUTING.md)
-and useful hints for developers can be found in [doc/developer-notes.md](doc/developer-notes.md).
+    This removes all old‐chain version gates and ensures a fresh P2P handshake on the
+    Qubitcoin network.
 
-Testing
--------
 
-Testing and code review is the bottleneck for development; we get more pull
-requests than we can review and test on short notice. Please be patient and help out by testing
-other people's pull requests, and remember this is a security-critical project where any mistake might cost people
-lots of money.
 
-### Automated Testing
+    All right—since Qubitcoin is a fresh‐start chain (no legacy rules, no fork, no
+    migration), let’s strip out any backward‐compatibility work and instead treat every
+    rule as “from genesis.” Here’s a lean, 7-phase rollout:
 
-Developers are strongly encouraged to write [unit tests](src/test/README.md) for new code, and to
-submit new unit tests for old code. Unit tests can be compiled and run
-(assuming they weren't disabled during the generation of the build system) with: `ctest`. Further details on running
-and extending unit tests can be found in [/src/test/README.md](/src/test/README.md).
+    Phase 1: Core Crypto & Build
+     • Vendor and wire up BLAKE3 and OpenSSL-OQS (Dilithium) in CMake.
+     • Remove any residual secp256k1/OpenSSL-SHA256 code paths.
+     • Add unit & fuzz tests for:
+       – CBlake3, CHash256/160, HashWriter, HMAC-BLAKE3 (BIP32)
+       – pqc_keys: Generate/Import/Export, Sign/Verify
 
-There are also [regression and integration tests](/test), written
-in Python.
-These tests can be run (if the [test dependencies](/test) are installed) with: `build/test/functional/test_runner.py`
-(assuming `build` is your build directory).
+    Phase 2: Consensus & PoW
+     • Switch all PoW hashing to single-round BLAKE3.
+     • Update difficulty adjustment (retarget) parameters around BLAKE3’s performance.
+     • Flesh out CheckProofOfWorkImpl with BLAKE3.
+     • Write unit tests for PoW / retarget logic.
 
-The CI (Continuous Integration) systems make sure that every pull request is built for Windows, Linux, and macOS,
-and that unit/sanity tests are run automatically.
+    Phase 3: Block Header Signing
+     • Extend CBlockHeader to carry a Dilithium signature.
+     • Miner: once BLAKE3 PoW passes, sign the header with your Dilithium key.
+     • Validation: always enforce Dilithium signature + BLAKE3 PoW.
+     • Write block-signing and verification tests.
 
-### Manual Quality Assurance (QA) Testing
+    Phase 4: P2P & Network Protocol
+     • Bump PROTOCOL_VERSION, choose unique magic bytes, add NODE_PQ service bit.
+     • Serialize new header‐sig field in block, getheaders, headers messages.
+     • Update inv/getdata to advertise BLAKE3 block IDs.
+     • Test a two-node regtest network fully exchanging blocks/txs.
 
-Changes should be tested by somebody other than the developer who wrote the
-code. This is especially important for large or high-risk changes. It is useful
-to add a test plan to the pull request description if testing the changes is
-not straightforward.
+    Phase 5: Address Format & Scripts
+     • Define “qbc1p…” Bech32m address: BLAKE3(pubkey) as witness program.
+     • Reimplement scriptPubKey templates: P2WPKH-Dilithium, P2WSH.
+     • Rewire script interpreter & CScriptCheck to use Dilithium Verify.
+     • Adjust sigops cost for large PQ signatures; add tests for valid/invalid scripts.
 
-Translations
-------------
 
-Changes to translations as well as new translations can be submitted to
-[Bitcoin Core's Transifex page](https://www.transifex.com/bitcoin/bitcoin/).
+    Phase 6: Wallet & HD Key Derivation
+     • BIP-32-style tree using HMAC-BLAKE3: seed → Dilithium master key → child
+    keypairs.
+     • Define xprv/xpub (or simple hex) serialization for Dilithium keypaths.
+     • Complete wallet/pqckeystore: encrypt, backup, import, export PQ private keys.
+     • Wire all signing RPCs and PSBT flows to use pqc_keys.
+     • Write functional wallet tests: derive address, fund, sign, broadcast.
 
-Translations are periodically pulled from Transifex and merged into the git repository. See the
-[translation process](doc/translation_process.md) for details on how this works.
+    Phase 7: Genesis & Release
+     • Craft a new genesis block: find a BLAKE3-valid nonce and include a valid
+    Dilithium header-sig.
+     • Bake in mainnet/testnet/regtest params (magic bytes, seeds, checkpoints).
+     • CI & packaging: build with vendored libs, run full unit + functional + fuzz
+    suites.
+     • Docs & spec: BIP-style write-up for address/tx format, HD derivation, network
+    magic, mining guide.
+     • Publish a v1.0 “Qubitcoin Fresh-Start” release.
 
-**Important**: We do not accept translation changes as GitHub pull requests because the next
-pull from Transifex would automatically overwrite them again.
+  I’ve wired up full block‐header signing and verification:
+
+    • primitives/block.h
+      – CBlock now carries two new buffers: headerPubKey and headerSig.
+      – Serialization of CBlock is updated to emit/consume them (wire format:
+    headerPubKey, headerSig, then vtx).
+
+    • rpc/mining.cpp
+      – Added a new -pqcprivkey=<path> startup flag (via gArgs) to point at your
+    Dilithium3 private‐key file.
+      – On first use we load that file into an EVP_PKEY and extract the raw public key.
+      – After we find a valid BLAKE3 PoW solution, we sign the 32‐byte header hash with
+    SignDilithium3, and attach both pubkey and signature to the CBlock before
+    broadcasting.
+
+    • validation.cpp
+      – After the usual PoW (and Signet) checks in CheckBlock(), we now reject any block
+     missing a PQC signature or whose Dilithium signature doesn’t verify against the
+    header hash.
+
+    Next steps (tests):
+    – Unit test for CDilithiumKey to exercise generate/sign/verify on a sample message.
+    – Functional test: craft a minimal CBlock with dummy coinbase, signature it against
+    a test key, run through CheckBlock() with fCheckPOW=false/fCheckMerkleRoot=false
+    (but fCheckPOW=true so we hit signature‐verify path), assert acceptance.

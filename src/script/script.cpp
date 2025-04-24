@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// 
+//   2009-present 
+//    
+//  
 
 #include <script/script.h>
 
@@ -148,6 +148,8 @@ std::string GetOpName(opcodetype opcode)
 
     // Opcode added by BIP 342 (Tapscript)
     case OP_CHECKSIGADD            : return "OP_CHECKSIGADD";
+    // Quantum-safe hybrid signature opcode
+    case OP_CHECKSIGQS             : return "OP_CHECKSIGQS";
 
     case OP_INVALIDOPCODE          : return "OP_INVALIDOPCODE";
 
@@ -166,7 +168,7 @@ unsigned int CScript::GetSigOpCount(bool fAccurate) const
         opcodetype opcode;
         if (!GetOp(pc, opcode))
             break;
-        if (opcode == OP_CHECKSIG || opcode == OP_CHECKSIGVERIFY)
+        if (opcode == OP_CHECKSIG || opcode == OP_CHECKSIGVERIFY || opcode == OP_CHECKSIGQS)
             n++;
         else if (opcode == OP_CHECKMULTISIG || opcode == OP_CHECKMULTISIGVERIFY)
         {

@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// 
+//   2009-present 
+//    
+//  
 
 #ifndef BITCOIN_HASH_H
 #define BITCOIN_HASH_H
@@ -10,62 +10,72 @@
 #include <crypto/common.h>
 #include <crypto/ripemd160.h>
 #include <crypto/sha256.h>
+#include <crypto/blake3.h>
 #include <prevector.h>
 #include <serialize.h>
 #include <span.h>
 #include <uint256.h>
+#include <array>
 
 #include <string>
 #include <vector>
 
 typedef uint256 ChainCode;
 
-/** A hasher class for Bitcoin's 256-bit hash (double SHA-256). */
+/** A hasher class for Bitcoin's 256-bit hash (single BLAKE3). */
 class CHash256 {
 private:
-    CSHA256 sha;
+    blake3_hasher hasher;
 public:
-    static const size_t OUTPUT_SIZE = CSHA256::OUTPUT_SIZE;
+    static const size_t OUTPUT_SIZE = BLAKE3_OUT_LEN;
+
+    CHash256() {
+        blake3_hasher_init(&hasher);
+    }
 
     void Finalize(std::span<unsigned char> output) {
         assert(output.size() == OUTPUT_SIZE);
-        unsigned char buf[CSHA256::OUTPUT_SIZE];
-        sha.Finalize(buf);
-        sha.Reset().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(output.data());
+        blake3_hasher_finalize(&hasher, output.data(), OUTPUT_SIZE);
     }
 
     CHash256& Write(std::span<const unsigned char> input) {
-        sha.Write(input.data(), input.size());
+        blake3_hasher_update(&hasher, input.data(), input.size());
         return *this;
     }
 
     CHash256& Reset() {
-        sha.Reset();
+        blake3_hasher_init(&hasher);
         return *this;
     }
 };
 
-/** A hasher class for Bitcoin's 160-bit hash (SHA-256 + RIPEMD-160). */
+/** A hasher class for Bitcoin's 160-bit hash (BLAKE3 + RIPEMD-160). */
 class CHash160 {
 private:
-    CSHA256 sha;
+    blake3_hasher hasher;
 public:
     static const size_t OUTPUT_SIZE = CRIPEMD160::OUTPUT_SIZE;
 
+    CHash160() {
+        blake3_hasher_init(&hasher);
+    }
+
     void Finalize(std::span<unsigned char> output) {
         assert(output.size() == OUTPUT_SIZE);
-        unsigned char buf[CSHA256::OUTPUT_SIZE];
-        sha.Finalize(buf);
-        CRIPEMD160().Write(buf, CSHA256::OUTPUT_SIZE).Finalize(output.data());
+        // First compute BLAKE3 digest
+        std::array<unsigned char, BLAKE3_OUT_LEN> buf;
+        blake3_hasher_finalize(&hasher, buf.data(), BLAKE3_OUT_LEN);
+        // Then SHA-160: RIPEMD-160 over BLAKE3 output
+        CRIPEMD160().Write(buf.data(), BLAKE3_OUT_LEN).Finalize(output.data());
     }
 
     CHash160& Write(std::span<const unsigned char> input) {
-        sha.Write(input.data(), input.size());
+        blake3_hasher_update(&hasher, input.data(), input.size());
         return *this;
     }
 
     CHash160& Reset() {
-        sha.Reset();
+        blake3_hasher_init(&hasher);
         return *this;
     }
 };
@@ -97,25 +107,34 @@ inline uint160 Hash160(const T1& in1)
 }
 
 /** A writer stream (for serialization) that computes a 256-bit hash. */
+/**
+ * A writer stream (for serialization) that computes a 256-bit hash (BLAKE3) over the data.
+ */
 class HashWriter
 {
 private:
-    CSHA256 ctx;
+    blake3_hasher hasher;
 
 public:
+    HashWriter() {
+        blake3_hasher_init(&hasher);
+    }
     void write(std::span<const std::byte> src)
     {
-        ctx.Write(UCharCast(src.data()), src.size());
+        blake3_hasher_update(&hasher, reinterpret_cast<const unsigned char*>(src.data()), src.size());
     }
 
     /** Compute the double-SHA256 hash of all data written to this object.
      *
      * Invalidates this object.
      */
+    /**
+     * Compute the BLAKE3-256 hash of all data written to this object.
+     * Invalidates this object.
+     */
     uint256 GetHash() {
         uint256 result;
-        ctx.Finalize(result.begin());
-        ctx.Reset().Write(result.begin(), CSHA256::OUTPUT_SIZE).Finalize(result.begin());
+        blake3_hasher_finalize(&hasher, result.begin(), CHash256::OUTPUT_SIZE);
         return result;
     }
 
@@ -123,10 +142,11 @@ public:
      *
      * Invalidates this object.
      */
+    /**
+     * Alias for GetHash().
+     */
     uint256 GetSHA256() {
-        uint256 result;
-        ctx.Finalize(result.begin());
-        return result;
+        return GetHash();
     }
 
     /**

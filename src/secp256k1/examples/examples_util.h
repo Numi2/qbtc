@@ -1,5 +1,5 @@
 /*************************************************************************
- * Copyright (c) 2020-2021 Elichai Turkel                                *
+ *   2020-2021 Elichai Turkel                                *
  * Distributed under the CC0 software license, see the accompanying file *
  * EXAMPLES_COPYING or https://creativecommons.org/publicdomain/zero/1.0 *
  *************************************************************************/

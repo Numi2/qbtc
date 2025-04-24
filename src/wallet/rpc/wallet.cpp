@@ -1,7 +1,7 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2010 Satoshi Nakamoto
+//   2009-present 
+//    
+//  
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -15,9 +15,12 @@
 #include <wallet/rpc/wallet.h>
 #include <wallet/rpc/util.h>
 #include <wallet/wallet.h>
+#include <wallet/pqckeystore.h>
 #include <wallet/walletutil.h>
 
 #include <optional>
+#include <random.h>
+#include <util/strencodings.h>
 
 #include <univalue.h>
 
@@ -578,8 +581,111 @@ static RPCHelpMan sethdseed()
     return UniValue::VNULL;
 },
     };
+// Set or regenerate the master PQC seed for HD Dilithium keys
+static RPCHelpMan setpqcseed()
+{
+    return RPCHelpMan{"setpqcseed",
+        "\nSet or generate a new master PQC seed for HD Dilithium key derivation.\n"
+        "This will overwrite any existing PQC seed in the wallet.\n",
+        {},
+        RPCResult{RPCResult::Type::NONE, "", ""},
+        RPCExamples{
+            HelpExampleCli("setpqcseed", "")
+        },
+    [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+    {
+        std::shared_ptr<CWallet> pwallet = GetWalletForJSONRPCRequest(request);
+        if (!pwallet) return UniValue::VNULL;
+        EnsureWalletIsUnlocked(*pwallet);
+        // Generate random 32-byte seed
+        std::vector<unsigned char> seed(32);
+        GetRandBytes(seed);
+        LOCK(pwallet->cs_wallet);
+        pwallet->SetPqcSeed(seed);
+        return UniValue::VNULL;
+    }
+    };
+// Retrieve the master PQC seed for HD Dilithium keys
+static RPCHelpMan getpqcseed()
+{
+    return RPCHelpMan{"getpqcseed",
+        "\nGet the master PQC seed (hex-encoded) for HD Dilithium key derivation.\n",
+        {},
+        RPCResult{RPCResult::Type::STR, "hex", "The hex-encoded PQC seed"},
+        RPCExamples{
+            HelpExampleCli("getpqcseed", "")
+        },
+    [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+    {
+        std::shared_ptr<CWallet> pwallet = GetWalletForJSONRPCRequest(request);
+        if (!pwallet) return UniValue::VNULL;
+        EnsureWalletIsUnlocked(*pwallet);
+        if (!pwallet->HasPqcSeed()) {
+            throw JSONRPCError(RPC_WALLET_ERROR, "No PQC seed set in wallet");
+        }
+        return HexStr(pwallet->GetPqcSeed());
+    }
+    };
 }
-
+// Generate a new PQC (Dilithium3) address and keypair
+static RPCHelpMan getnewpqcaddress()
+{
+    return RPCHelpMan{"getnewpqcaddress",
+        "Generate a new quantum-safe Dilithium3 address and keypair.\n",
+        {},
+        {
+            {RPCResult::Type::STR, "address", "The new Bech32m v2 address (qbc1p...)"},
+            {RPCResult::Type::STR, "public_key", "The public key in base64 (SPKI DER)"},
+            {RPCResult::Type::STR, "private_key", "The private key in base64 (PKCS8 DER)"},
+        },
+        RPCExamples{
+            HelpExampleCli("getnewpqcaddress", "") +
+            HelpExampleRpc("getnewpqcaddress", "")
+        },
+    [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+    {
+        std::shared_ptr<CWallet> pwallet = GetWalletForJSONRPCRequest(request);
+        if (!pwallet) return UniValue::VNULL;
+        EnsureWalletIsUnlocked(*pwallet);
+        auto& ks = pwallet->GetPQCKeyStore();
+        auto [address, pubkey, privkey] = ks.GetNewPQCAddress();
+        UniValue result(UniValue::VOBJ);
+        result.pushKV("address", address);
+        result.pushKV("public_key", pubkey);
+        result.pushKV("private_key", privkey);
+        return result;
+    }
+    };
+// Import a PQC (Dilithium3) address and keypair into the wallet
+static RPCHelpMan importpqcaddress()
+{
+    return RPCHelpMan{"importpqcaddress",
+        "Import a quantum-safe Dilithium3 address and keypair into the wallet.\n",
+        {
+            {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The Bech32m v2 address to import"},
+            {"public_key", RPCArg::Type::STR, RPCArg::Optional::NO, "The public key in base64 (SPKI DER)"},
+            {"private_key", RPCArg::Type::STR, RPCArg::Optional::NO, "The private key in base64 (PKCS8 DER)"},
+        },
+        RPCResult{RPCResult::Type::BOOL, "success", "True if import was successful"},
+        RPCExamples{
+            HelpExampleCli("importpqcaddress", "\"qbc1p...\" \"<pub_b64>\" \"<priv_b64>\"") +
+            HelpExampleRpc("importpqcaddress", "[\"qbc1p...\", \"<pub_b64>\", \"<priv_b64>\"]")
+        },
+    [&](const RPCHelpMan& self, const JSONRPCRequest& request) -> UniValue
+    {
+        std::shared_ptr<CWallet> pwallet = GetWalletForJSONRPCRequest(request);
+        if (!pwallet) return UniValue::VNULL;
+        EnsureWalletIsUnlocked(*pwallet);
+        auto& ks = pwallet->GetPQCKeyStore();
+        std::string address = request.params[0].get_str();
+        std::string pubkey = request.params[1].get_str();
+        std::string privkey = request.params[2].get_str();
+        bool ok = ks.ImportPQCAddress(address, pubkey, privkey);
+        if (!ok) throw JSONRPCError(RPC_WALLET_ERROR, "Failed to import PQC address");
+        return UniValue(ok);
+    }
+    };
+// Next RPC method: upgradewallet
 static RPCHelpMan upgradewallet()
 {
     return RPCHelpMan{"upgradewallet",
@@ -1050,6 +1156,8 @@ RPCHelpMan dumpprivkey();
 RPCHelpMan importprivkey();
 RPCHelpMan importaddress();
 RPCHelpMan importpubkey();
+RPCHelpMan getnewpqcaddress();
+RPCHelpMan importpqcaddress();
 RPCHelpMan dumpwallet();
 RPCHelpMan importwallet();
 RPCHelpMan importprunedfunds();
@@ -1159,6 +1267,10 @@ std::span<const CRPCCommand> GetWalletRPCCommands()
         {"wallet", &sendmany},
         {"wallet", &sendtoaddress},
         {"wallet", &sethdseed},
+        {"wallet", &setpqcseed},
+        {"wallet", &getpqcseed},
+        {"wallet", &getnewpqcaddress},
+        {"wallet", &importpqcaddress},
         {"wallet", &setlabel},
         {"wallet", &settxfee},
         {"wallet", &setwalletflag},

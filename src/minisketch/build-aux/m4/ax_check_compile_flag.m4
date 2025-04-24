@@ -26,8 +26,8 @@
 #
 # LICENSE
 #
-#   Copyright (c) 2008 Guido U. Draheim <guidod@gmx.de>
-#   Copyright (c) 2011 Maarten Bosmans <mkbosmans@gmail.com>
+#     2008 Guido U. Draheim <guidod@gmx.de>
+#     2011 Maarten Bosmans <mkbosmans@gmail.com>
 #
 #   Copying and distribution of this file, with or without modification, are
 #   permitted in any medium without royalty provided the copyright notice

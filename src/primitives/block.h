@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #ifndef BITCOIN_PRIMITIVES_BLOCK_H
 #define BITCOIN_PRIMITIVES_BLOCK_H
@@ -70,6 +68,9 @@ class CBlock : public CBlockHeader
 public:
     // network and disk
     std::vector<CTransactionRef> vtx;
+    // Dilithium public key and signature for the block header (post-quantum safety)
+    std::vector<unsigned char> headerPubKey;
+    std::vector<unsigned char> headerSig;
 
     // Memory-only flags for caching expensive checks
     mutable bool fChecked;                            // CheckBlock()
@@ -89,7 +90,7 @@ public:
 
     SERIALIZE_METHODS(CBlock, obj)
     {
-        READWRITE(AsBase<CBlockHeader>(obj), obj.vtx);
+        READWRITE(AsBase<CBlockHeader>(obj), obj.headerPubKey, obj.headerSig, obj.vtx);
     }
 
     void SetNull()

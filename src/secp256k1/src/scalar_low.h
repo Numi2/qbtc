@@ -1,6 +1,6 @@
 /***********************************************************************
- * Copyright (c) 2015, 2022 Andrew Poelstra, Pieter Wuille             *
- * Distributed under the MIT software license, see the accompanying    *
+ *   2015, 2022 Andrew Poelstra, Pieter Wuille             *
+ *        *
  * file COPYING or https://www.opensource.org/licenses/mit-license.php.*
  ***********************************************************************/
 

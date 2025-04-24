@@ -1,6 +1,6 @@
-// Copyright (c) 2024
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2024
+//    
+//  
 #ifndef BITCOIN_NODE_TXDOWNLOADMAN_IMPL_H
 #define BITCOIN_NODE_TXDOWNLOADMAN_IMPL_H
 

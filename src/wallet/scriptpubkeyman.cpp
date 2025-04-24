@@ -1,11 +1,12 @@
-// Copyright (c) 2019-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2019-2022 
+//    
+//  
 
 #include <hash.h>
 #include <key_io.h>
 #include <logging.h>
 #include <node/types.h>
+#include <chainparams.h>  // for Params()
 #include <outputtype.h>
 #include <script/descriptor.h>
 #include <script/script.h>
@@ -1134,10 +1135,13 @@ void LegacyScriptPubKeyMan::DeriveNewChildKey(WalletBatch &batch, CKeyMetadata& 
 {
     // for now we use a fixed keypath scheme of m/0'/0'/k
     CKey seed;                     //seed (256bit)
-    CExtKey masterKey;             //hd master key
-    CExtKey accountKey;            //key at m/0'
-    CExtKey chainChildKey;         //key at m/0'/0' (external) or m/0'/1' (internal)
-    CExtKey childKey;              //key at m/0'/0'/<n>'
+    CExtKey masterKey;             // hd master key
+    // post-quantum HD: purpose 86', coin_type 0'/1', account 0'
+    CExtKey purposeKey;            // key at m/86'
+    CExtKey coinTypeKey;           // key at m/86'/coin_type'
+    CExtKey accountKey;            // key at m/86'/coin_type'/0'
+    CExtKey chainChildKey;         // key at m/86'/coin_type'/0'/chain' (external/internal)
+    CExtKey childKey;              // key at m/86'/coin_type'/0'/chain'/<n>'
 
     // try to get the seed
     if (!GetKey(hd_chain.seed_id, seed))
@@ -1145,33 +1149,51 @@ void LegacyScriptPubKeyMan::DeriveNewChildKey(WalletBatch &batch, CKeyMetadata& 
 
     masterKey.SetSeed(seed);
 
-    // derive m/0'
-    // use hardened derivation (child keys >= 0x80000000 are hardened after bip32)
-    DeriveExtKey(masterKey, BIP32_HARDENED_KEY_LIMIT, accountKey);
-
-    // derive m/0'/0' (external chain) OR m/0'/1' (internal chain)
+    // derive m/86'/coin_type'/0'
+    // coin_type is 0' for mainnet, 1' for testnet/regtest
+    uint32_t purpose = 86;
+    uint32_t coin_type = Params().IsTestChain() ? 1 : 0;
+    // m/86'
+    DeriveExtKey(masterKey, BIP32_HARDENED_KEY_LIMIT + purpose, purposeKey);
+    // m/86'/coin_type'
+    DeriveExtKey(purposeKey, BIP32_HARDENED_KEY_LIMIT + coin_type, coinTypeKey);
+    // m/86'/coin_type'/0'
+    DeriveExtKey(coinTypeKey, BIP32_HARDENED_KEY_LIMIT, accountKey);
+    // derive m/86'/coin_type'/0'/chain' (external=0, internal=1)
     assert(internal ? m_storage.CanSupportFeature(FEATURE_HD_SPLIT) : true);
-    DeriveExtKey(accountKey, BIP32_HARDENED_KEY_LIMIT+(internal ? 1 : 0), chainChildKey);
+    DeriveExtKey(accountKey, BIP32_HARDENED_KEY_LIMIT + (internal ? 1 : 0), chainChildKey);
 
     // derive child key at next index, skip keys already known to the wallet
     do {
         // always derive hardened keys
         // childIndex | BIP32_HARDENED_KEY_LIMIT = derive childIndex in hardened child-index-range
         // example: 1 | BIP32_HARDENED_KEY_LIMIT == 0x80000001 == 2147483649
+        // derive child key at next index, skip keys already known to the wallet
         if (internal) {
-            DeriveExtKey(chainChildKey, hd_chain.nInternalChainCounter | BIP32_HARDENED_KEY_LIMIT, childKey);
-            metadata.hdKeypath = "m/0'/1'/" + ToString(hd_chain.nInternalChainCounter) + "'";
+            // external/internal counter selects index
+            uint32_t idx = hd_chain.nInternalChainCounter;
+            DeriveExtKey(chainChildKey, idx | BIP32_HARDENED_KEY_LIMIT, childKey);
+            // hdKeypath m/86'/coin_type'/0'/1'/idx'
+            std::string coin_str = std::to_string(coin_type);
+            metadata.hdKeypath = std::string("m/86'/") + coin_str + "'/0'/1'/" + ToString(idx) + "'";
+            // key origin path entries
+            metadata.key_origin.path.push_back(purpose | BIP32_HARDENED_KEY_LIMIT);
+            metadata.key_origin.path.push_back(coin_type | BIP32_HARDENED_KEY_LIMIT);
             metadata.key_origin.path.push_back(0 | BIP32_HARDENED_KEY_LIMIT);
             metadata.key_origin.path.push_back(1 | BIP32_HARDENED_KEY_LIMIT);
-            metadata.key_origin.path.push_back(hd_chain.nInternalChainCounter | BIP32_HARDENED_KEY_LIMIT);
+            metadata.key_origin.path.push_back(idx | BIP32_HARDENED_KEY_LIMIT);
             hd_chain.nInternalChainCounter++;
-        }
-        else {
-            DeriveExtKey(chainChildKey, hd_chain.nExternalChainCounter | BIP32_HARDENED_KEY_LIMIT, childKey);
-            metadata.hdKeypath = "m/0'/0'/" + ToString(hd_chain.nExternalChainCounter) + "'";
+        } else {
+            uint32_t idx = hd_chain.nExternalChainCounter;
+            DeriveExtKey(chainChildKey, idx | BIP32_HARDENED_KEY_LIMIT, childKey);
+            // hdKeypath m/86'/coin_type'/0'/0'/idx'
+            std::string coin_str = std::to_string(coin_type);
+            metadata.hdKeypath = std::string("m/86'/") + coin_str + "'/0'/0'/" + ToString(idx) + "'";
+            metadata.key_origin.path.push_back(purpose | BIP32_HARDENED_KEY_LIMIT);
+            metadata.key_origin.path.push_back(coin_type | BIP32_HARDENED_KEY_LIMIT);
             metadata.key_origin.path.push_back(0 | BIP32_HARDENED_KEY_LIMIT);
             metadata.key_origin.path.push_back(0 | BIP32_HARDENED_KEY_LIMIT);
-            metadata.key_origin.path.push_back(hd_chain.nExternalChainCounter | BIP32_HARDENED_KEY_LIMIT);
+            metadata.key_origin.path.push_back(idx | BIP32_HARDENED_KEY_LIMIT);
             hd_chain.nExternalChainCounter++;
         }
     } while (HaveKey(childKey.key.GetPubKey().GetID()));

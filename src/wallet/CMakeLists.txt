@@ -1,6 +1,6 @@
-# Copyright (c) 2023-present The Bitcoin Core developers
-# Distributed under the MIT software license, see the accompanying
-# file COPYING or https://opensource.org/license/mit/.
+#   2023-present 
+#    
+#  .
 
 # Wallet functionality used by bitcoind and bitcoin-wallet executables.
 add_library(bitcoin_wallet STATIC EXCLUDE_FROM_ALL
@@ -32,6 +32,7 @@ add_library(bitcoin_wallet STATIC EXCLUDE_FROM_ALL
   transaction.cpp
   wallet.cpp
   walletdb.cpp
+  pqckeystore.cpp
   walletutil.cpp
 )
 target_link_libraries(bitcoin_wallet

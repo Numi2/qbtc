@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #ifndef BITCOIN_INIT_H
 #define BITCOIN_INIT_H
@@ -37,7 +35,7 @@ void InitLogging(const ArgsManager& args);
 //!Parameter interaction: change current parameters depending on various rules
 void InitParameterInteraction(ArgsManager& args);
 
-/** Initialize bitcoin core: Basic context setup.
+/** Initialize  : Basic context setup.
  *  @note This can be done before daemonization. Do not call Shutdown() if this function fails.
  *  @pre Parameters should be parsed and config file should be read.
  */
@@ -55,7 +53,7 @@ bool AppInitParameterInteraction(const ArgsManager& args);
  */
 bool AppInitSanityChecks(const kernel::Context& kernel);
 /**
- * Lock bitcoin core critical directories.
+ * Lock   critical directories.
  * @note This should only be done after daemonization. Do not call Shutdown() if this function fails.
  * @pre Parameters should be parsed and config file should be read, AppInitSanityChecks should have been called.
  */
@@ -65,7 +63,7 @@ bool AppInitLockDirectories();
  */
 bool AppInitInterfaces(node::NodeContext& node);
 /**
- * Bitcoin core main initialization.
+ *   main initialization.
  * @note This should only be done after daemonization. Call Shutdown() if this function fails.
  * @pre Parameters should be parsed and config file should be read, AppInitLockDirectories should have been called.
  */

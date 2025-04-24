@@ -1,7 +1,7 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2010 Satoshi Nakamoto
+//   2009-present 
+//    
+//  
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -40,6 +40,10 @@
 #include <util/string.h>
 #include <util/time.h>
 #include <util/translation.h>
+#include <util/system.h>        // for gArgs
+#include <crypto/pqc_keys.h>
+#include <fstream>
+#include <iterator>
 #include <validation.h>
 #include <validationinterface.h>
 
@@ -55,6 +59,32 @@ using node::NodeContext;
 using node::RegenerateCommitments;
 using node::UpdateTime;
 using util::ToString;
+
+//----------------------------------------------------------------------------
+// Post-Quantum Dilithium key for block header signing
+namespace {
+static EVP_PKEY* g_pqc_privkey = nullptr;
+static std::vector<unsigned char> g_pqc_pubkey;
+static bool g_pqc_key_loaded = false;
+
+// Load Dilithium private key from file (-pqcprivkey), extract pubkey
+static void EnsurePqcKeyLoaded()
+{
+    if (g_pqc_key_loaded) return;
+    const std::string keyFile = gArgs.GetArg("-pqcprivkey", std::string());
+    if (keyFile.empty()) {
+        throw JSONRPCError(RPC_INVALID_PARAMETER, "Missing -pqcprivkey (path to Dilithium private key file)");
+    }
+    std::ifstream f(keyFile, std::ios::binary);
+    if (!f) throw JSONRPCError(RPC_INTERNAL_ERROR, "Cannot open pqc private key file");
+    std::vector<unsigned char> data((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
+    if (data.empty()) throw JSONRPCError(RPC_INTERNAL_ERROR, "Empty pqc private key file");
+    g_pqc_privkey = LoadDilithium3PrivateKey(data.data(), data.size());
+    g_pqc_pubkey = ExportDilithium3PublicKey(g_pqc_privkey);
+    g_pqc_key_loaded = true;
+}
+} // namespace
+//----------------------------------------------------------------------------
 
 /**
  * Return average network hashes per second based on the last 'lookup' blocks,
@@ -148,6 +178,13 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
     if (block.nNonce == std::numeric_limits<uint32_t>::max()) {
         return true;
     }
+    // Sign the block header with Dilithium private key (post-quantum security)
+    EnsurePqcKeyLoaded();
+    // Message to sign: header hash used for PoW
+    uint256 headerHash = block.GetHash();
+    std::vector<unsigned char> sig = SignDilithium3(g_pqc_privkey, headerHash.begin(), headerHash.size());
+    block.headerPubKey = g_pqc_pubkey;
+    block.headerSig = std::move(sig);
 
     block_out = std::make_shared<const CBlock>(std::move(block));
 

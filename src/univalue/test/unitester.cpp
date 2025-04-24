@@ -1,6 +1,6 @@
 // Copyright 2014 BitPay Inc.
-// Copyright (c) 2015-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
+//   2015-present 
+//    
 // file COPYING or https://opensource.org/licenses/mit-license.php.
 
 #include <univalue.h>

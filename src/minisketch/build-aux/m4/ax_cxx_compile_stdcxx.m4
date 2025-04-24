@@ -27,15 +27,15 @@
 #
 # LICENSE
 #
-#   Copyright (c) 2008 Benjamin Kosnik <bkoz@redhat.com>
-#   Copyright (c) 2012 Zack Weinberg <zackw@panix.com>
-#   Copyright (c) 2013 Roy Stogner <roystgnr@ices.utexas.edu>
-#   Copyright (c) 2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
-#   Copyright (c) 2015 Paul Norman <penorman@mac.com>
-#   Copyright (c) 2015 Moritz Klammler <moritz@klammler.eu>
-#   Copyright (c) 2016, 2018 Krzesimir Nowak <qdlacz@gmail.com>
-#   Copyright (c) 2019 Enji Cooper <yaneurabeya@gmail.com>
-#   Copyright (c) 2020 Jason Merrill <jason@redhat.com>
+#     2008 Benjamin Kosnik <bkoz@redhat.com>
+#     2012 Zack Weinberg <zackw@panix.com>
+#     2013 Roy Stogner <roystgnr@ices.utexas.edu>
+#     2014, 2015 Google Inc.; contributed by Alexey Sokolov <sokolov@google.com>
+#     2015 Paul Norman <penorman@mac.com>
+#     2015 Moritz Klammler <moritz@klammler.eu>
+#     2016, 2018 Krzesimir Nowak <qdlacz@gmail.com>
+#     2019 Enji Cooper <yaneurabeya@gmail.com>
+#     2020 Jason Merrill <jason@redhat.com>
 #
 #   Copying and distribution of this file, with or without modification, are
 #   permitted in any medium without royalty provided the copyright notice

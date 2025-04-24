@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #ifndef BITCOIN_PROTOCOL_H
 #define BITCOIN_PROTOCOL_H
@@ -311,7 +309,7 @@ enum ServiceFlags : uint64_t {
     // Nothing
     NODE_NONE = 0,
     // NODE_NETWORK means that the node is capable of serving the complete block chain. It is currently
-    // set by all Bitcoin Core non pruned nodes, and is unset by SPV clients or other light clients.
+    // set by all   non pruned nodes, and is unset by SPV clients or other light clients.
     NODE_NETWORK = (1 << 0),
     // NODE_BLOOM means the node is capable and willing to handle bloom-filtered connections.
     NODE_BLOOM = (1 << 2),
@@ -328,6 +326,8 @@ enum ServiceFlags : uint64_t {
 
     // NODE_P2P_V2 means the node supports BIP324 transport
     NODE_P2P_V2 = (1 << 11),
+    // NODE_PQ means the node supports quantum-safe P2P (Dilithium/BLAKE3)
+    NODE_PQ      = (1 << 12),
 
     // Bits 24-31 are reserved for temporary experiments. Just pick a bit that
     // isn't getting used, or one not being used much, and notify the
@@ -351,7 +351,7 @@ std::vector<std::string> serviceFlagsToStr(uint64_t flags);
  * should be updated appropriately to filter for nodes with
  * desired service flags (compatible with our new flags).
  */
-constexpr ServiceFlags SeedsServiceFlags() { return ServiceFlags(NODE_NETWORK | NODE_WITNESS); }
+constexpr ServiceFlags SeedsServiceFlags() { return ServiceFlags(NODE_NETWORK | NODE_PQ); }
 
 /**
  * Checks if a peer with the given service flags may be capable of having a

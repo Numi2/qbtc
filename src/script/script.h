@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// 
+//   2009-present 
+//    
+//  
 
 #ifndef BITCOIN_SCRIPT_SCRIPT_H
 #define BITCOIN_SCRIPT_SCRIPT_H
@@ -208,6 +208,8 @@ enum opcodetype
 
     // Opcode added by BIP 342 (Tapscript)
     OP_CHECKSIGADD = 0xba,
+    // Opcode for quantum-safe hybrid signature verification (secp256k1 + Dilithium2)
+    OP_CHECKSIGQS = 0xbb,
 
     OP_INVALIDOPCODE = 0xff,
 };

@@ -1,7 +1,7 @@
-// Copyright (c) 2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2010 Satoshi Nakamoto
+//   2009-present 
+//    
+//  
 
 #include <base58.h>
 #include <chain.h>

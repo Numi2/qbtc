@@ -1,6 +1,6 @@
-# Copyright (c) 2023-present The Bitcoin Core developers
-# Distributed under the MIT software license, see the accompanying
-# file COPYING or https://opensource.org/license/mit/.
+#   2023-present 
+#    
+#  .
 
 include(AddWindowsResources)
 
@@ -300,6 +300,7 @@ add_library(bitcoin_node STATIC EXCLUDE_FROM_ALL
   rpc/server.cpp
   rpc/server_util.cpp
   rpc/signmessage.cpp
+  rpc/pqccmds.cpp
   rpc/txoutproof.cpp
   script/sigcache.cpp
   signet.cpp
@@ -332,7 +333,7 @@ target_link_libraries(bitcoin_node
 )
 
 
-# Bitcoin Core bitcoind.
+#   bitcoind.
 if(BUILD_DAEMON)
   add_executable(bitcoind
     bitcoind.cpp
@@ -388,7 +389,7 @@ target_link_libraries(bitcoin_cli
 )
 
 
-# Bitcoin Core RPC client
+#   RPC client
 if(BUILD_CLI)
   add_executable(bitcoin-cli bitcoin-cli.cpp)
   add_windows_resources(bitcoin-cli bitcoin-cli-res.rc)

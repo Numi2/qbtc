@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// 
+//   2009-present 
+//    
+//  
 
 #include <wallet/wallet.h>
 
@@ -44,6 +44,9 @@
 #include <serialize.h>
 #include <span.h>
 #include <streams.h>
+#include <openssl/evp.h>
+#include <crypto/pqc_keys.h>
+#include <wallet/pqckeystore.h>
 #include <support/allocators/secure.h>
 #include <support/allocators/zeroafterfree.h>
 #include <support/cleanse.h>
@@ -3012,7 +3015,31 @@ std::shared_ptr<CWallet> CWallet::Create(WalletContext& context, const std::stri
     std::shared_ptr<CWallet> walletInstance(new CWallet(chain, name, std::move(database)), FlushAndDeleteWallet);
     walletInstance->m_keypool_size = std::max(args.GetIntArg("-keypool", DEFAULT_KEYPOOL_SIZE), int64_t{1});
     walletInstance->m_notify_tx_changed_script = args.GetArg("-walletnotify", "");
+    // --- PQC key-store init -------------------------------------------
+    WalletBatch batch(walletInstance->GetDatabase());
+    std::vector<unsigned char> der;
+    if (batch.Read("pqcpriv", der)) {
+        try {
+            walletInstance->m_pqc_privkey = LoadDilithium3PrivateKey(der.data(), der.size());
+        } catch (const std::exception& e) {
+            error = strprintf(_("Failed to load PQC key: %s"), e.what());
+            return nullptr;
+        }
+    } else {
+        try {
+            walletInstance->m_pqc_privkey = GenerateDilithium3Key();
+            auto out = ExportDilithium3PrivateKey(walletInstance->m_pqc_privkey);
+            batch.Write("pqcpriv", out);
+        } catch (const std::exception& e) {
+            error = strprintf(_("Failed to generate PQC key: %s"), e.what());
+            return nullptr;
+        }
+    }
+    // ------------------------------------------------------------------
 
+    // Initialize PQC keystore
+    walletInstance->m_pqc_keystore = std::make_unique<CPQCKeyStore>(walletInstance.get());
+    walletInstance->m_pqc_keystore->Load(batch);
     // Load wallet
     bool rescan_required = false;
     DBErrors nLoadWalletRet = walletInstance->LoadWallet();
@@ -3547,6 +3574,24 @@ bool CWallet::Unlock(const CKeyingMaterial& vMasterKeyIn)
     }
     NotifyStatusChanged(this);
     return true;
+}
+// PQC seed accessors
+bool CWallet::HasPqcSeed() const
+{
+    LOCK(cs_wallet);
+    return !m_pqc_seed.empty();
+}
+void CWallet::SetPqcSeed(const std::vector<unsigned char>& seed)
+{
+    LOCK(cs_wallet);
+    m_pqc_seed = seed;
+    // Persist seed to database
+    WalletBatch batch(GetDatabase());
+    batch.WritePQCSeed(seed);
+}
+const std::vector<unsigned char>& CWallet::GetPqcSeed() const
+{
+    return m_pqc_seed;
 }
 
 std::set<ScriptPubKeyMan*> CWallet::GetActiveScriptPubKeyMans() const

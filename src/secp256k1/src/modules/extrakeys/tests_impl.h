@@ -1,6 +1,6 @@
 /***********************************************************************
- * Copyright (c) 2020 Jonas Nick                                       *
- * Distributed under the MIT software license, see the accompanying    *
+ *   2020 Jonas Nick                                       *
+ *        *
  * file COPYING or https://www.opensource.org/licenses/mit-license.php.*
  ***********************************************************************/
 

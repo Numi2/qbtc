@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -62,6 +60,9 @@ const std::string WALLETDESCRIPTORCKEY{"walletdescriptorckey"};
 const std::string WALLETDESCRIPTORKEY{"walletdescriptorkey"};
 const std::string WATCHMETA{"watchmeta"};
 const std::string WATCHS{"watchs"};
+const std::string PQCSEED{"pqcseed"};
+const std::string PQCKEY{"pqckey"};
+const std::string PQCINDEX{"pqcindex"};
 const std::unordered_set<std::string> LEGACY_TYPES{CRYPTED_KEY, CSCRIPT, DEFAULTKEY, HDCHAIN, KEYMETA, KEY, OLD_KEY, POOL, WATCHMETA, WATCHS};
 } // namespace DBKeys
 
@@ -224,6 +225,11 @@ bool WalletBatch::ErasePool(int64_t nPool)
 bool WalletBatch::WriteMinVersion(int nVersion)
 {
     return WriteIC(DBKeys::MINVERSION, nVersion);
+}
+// Write the master PQC (Dilithium) seed for HD PQC key derivation
+bool WalletBatch::WritePQCSeed(const std::vector<unsigned char>& seed)
+{
+    return WriteIC(DBKeys::PQCSEED, seed);
 }
 
 bool WalletBatch::WriteActiveScriptPubKeyMan(uint8_t type, const uint256& id, bool internal)
@@ -588,9 +594,23 @@ static DBErrors LoadLegacyWalletRecords(CWallet* pwallet, DatabaseBatch& batch, 
     // Note: There should only be one HDCHAIN record with no data following the type
     LoadResult hd_chain_res = LoadRecords(pwallet, batch, DBKeys::HDCHAIN,
         [] (CWallet* pwallet, DataStream& key, DataStream& value, std::string& err) {
-        return LoadHDChain(pwallet, value, err) ? DBErrors:: LOAD_OK : DBErrors::CORRUPT;
+        return LoadHDChain(pwallet, value, err) ? DBErrors::LOAD_OK : DBErrors::CORRUPT;
     });
     result = std::max(result, hd_chain_res.m_result);
+    // Load PQC seed for HD Dilithium keys
+    LoadResult pqcseed_res = LoadRecords(pwallet, batch, DBKeys::PQCSEED,
+        [] (CWallet* pwallet, DataStream& key, DataStream& value, std::string& err) {
+            std::vector<unsigned char> seed;
+            try {
+                value >> seed;
+            } catch (const std::exception& e) {
+                err = e.what();
+                return DBErrors::NONCRITICAL_ERROR;
+            }
+            pwallet->SetPqcSeed(seed);
+            return DBErrors::LOAD_OK;
+        });
+    result = std::max(result, pqcseed_res.m_result);
 
     // Load unencrypted keys
     LoadResult key_res = LoadRecords(pwallet, batch, DBKeys::KEY,
@@ -815,6 +835,20 @@ static DBErrors LoadDescriptorWalletRecords(CWallet* pwallet, DatabaseBatch& bat
 {
     AssertLockHeld(pwallet->cs_wallet);
 
+    // Load PQC seed for HD Dilithium keys (descriptor and legacy wallets)
+    LoadResult pqcseed_res = LoadRecords(pwallet, batch, DBKeys::PQCSEED,
+        [] (CWallet* pwallet, DataStream& key, DataStream& value, std::string& err) {
+            std::vector<unsigned char> seed;
+            try {
+                value >> seed;
+            } catch (const std::exception& e) {
+                err = e.what();
+                return DBErrors::NONCRITICAL_ERROR;
+            }
+            pwallet->SetPqcSeed(seed);
+            return DBErrors::LOAD_OK;
+        });
+    DBErrors result = pqcseed_res.m_result;
     // Load descriptor record
     int num_keys = 0;
     int num_ckeys= 0;

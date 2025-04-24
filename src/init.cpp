@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -91,6 +89,7 @@
 #include <validation.h>
 #include <validationinterface.h>
 #include <walletinitinterface.h>
+#include <crypto/pqc_keys.h>
 
 #include <algorithm>
 #include <condition_variable>
@@ -891,6 +890,13 @@ bool AppInitBasicSetup(const ArgsManager& args, std::atomic<int>& exit_status)
 
     std::set_new_handler(new_handler_terminate);
 
+    // Load the OpenQuantumSafe (OQS) provider for Dilithium3
+    try {
+        LoadOQSProvider();
+    } catch (const std::exception& e) {
+        return InitError(strprintf(_("Post-Quantum provider load failure: %s"), e.what()));
+    }
+
     return true;
 }
 
@@ -1413,6 +1419,8 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
      * available in the GUI RPC console even if external calls are disabled.
      */
     RegisterAllCoreRPCCommands(tableRPC);
+    // Register Post-Quantum Cryptography (PQC) RPC commands
+    RegisterPQCCommands(tableRPC);
     for (const auto& client : node.chain_clients) {
         client->registerRpcs();
     }

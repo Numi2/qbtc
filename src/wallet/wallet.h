@@ -1,7 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+#include <wallet/pqckeystore.h>
+ 
+//  
 
 #ifndef BITCOIN_WALLET_WALLET_H
 #define BITCOIN_WALLET_WALLET_H
@@ -33,6 +32,7 @@
 #include <wallet/transaction.h>
 #include <wallet/types.h>
 #include <wallet/walletutil.h>
+#include <openssl/evp.h>
 
 #include <atomic>
 #include <cassert>
@@ -391,6 +391,19 @@ private:
 
     /** Internal database handle. */
     std::unique_ptr<WalletDatabase> m_database;
+    // Our per-wallet post-quantum private key
+    EVP_PKEY* m_pqc_privkey{nullptr};
+    /** Master PQC seed for HD Dilithium key derivation */
+    std::vector<unsigned char> m_pqc_seed GUARDED_BY(cs_wallet);
+    // HD PQC key derivation store
+    std::unique_ptr<CPQCKeyStore> m_pqc_keystore;
+
+    /** Returns true if a PQC seed is set */
+    bool HasPqcSeed() const EXCLUSIVE_LOCKS_REQUIRED(cs_wallet);
+    /** Set the PQC seed and persist to database */
+    void SetPqcSeed(const std::vector<unsigned char>& seed) EXCLUSIVE_LOCKS_REQUIRED(cs_wallet);
+    /** Get the PQC seed */
+    const std::vector<unsigned char>& GetPqcSeed() const EXCLUSIVE_LOCKS_REQUIRED(cs_wallet);
 
     /**
      * The following is used to keep track of how far behind the wallet is
@@ -470,7 +483,13 @@ public:
     {
         // Should not have slots connected at this point.
         assert(NotifyUnload.empty());
+        if (m_database) m_database->Close();
+        if (m_pqc_privkey) EVP_PKEY_free(m_pqc_privkey);
     }
+    /** Access the Dilithium3 private key (may be nullptr). */
+    EVP_PKEY* GetDilithiumKey() const { return m_pqc_privkey; }
+    /** Access the PQC HD keystore */
+    CPQCKeyStore& GetPQCKeyStore() const { return *m_pqc_keystore; }
 
     bool IsCrypted() const;
     bool IsLocked() const override;

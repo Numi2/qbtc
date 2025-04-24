@@ -1,7 +1,5 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//  
 
 #ifndef BITCOIN_WALLET_WALLETDB_H
 #define BITCOIN_WALLET_WALLETDB_H
@@ -88,6 +86,9 @@ extern const std::string WALLETDESCRIPTORCKEY;
 extern const std::string WALLETDESCRIPTORKEY;
 extern const std::string WATCHMETA;
 extern const std::string WATCHS;
+extern const std::string PQCSEED;   // Master Dilithium (PQC) seed for HD PQC keys
+extern const std::string PQCKEY;    // Per-index Dilithium3 private key (PKCS8 DER)
+extern const std::string PQCINDEX;  // Next index for HD PQC key derivation
 
 // Keys in this set pertain only to the legacy wallet (LegacyScriptPubKeyMan) and are removed during migration from legacy to descriptors.
 extern const std::unordered_set<std::string> LEGACY_TYPES;

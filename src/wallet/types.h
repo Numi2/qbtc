@@ -1,7 +1,6 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-2021 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+ 
+//    
+//  
 
 //! @file wallet/types.h is a home for public enum and struct type definitions
 //! that are used by internally by wallet code, but also used externally by node

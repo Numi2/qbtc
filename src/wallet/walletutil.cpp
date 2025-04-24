@@ -1,6 +1,6 @@
-// Copyright (c) 2017-2022 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2017-2022 
+//    
+//  
 
 #include <wallet/walletutil.h>
 
@@ -66,7 +66,8 @@ WalletDescriptor GenerateWalletDescriptor(const CExtPubKey& master_key, const Ou
         break;
     }
     case OutputType::BECH32: {
-        desc_prefix = "wpkh(" + xpub + "/84h";
+        // Use post-quantum HD path: purpose 86' instead of BIP84's 84'
+        desc_prefix = "wpkh(" + xpub + "/86h";
         break;
     }
     case OutputType::BECH32M: {

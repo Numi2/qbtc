@@ -1,6 +1,6 @@
-// Copyright (c) 2015-2020 The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+//   2015-2020 
+//    
+//  
 
 #include <consensus/merkle.h>
 #include <hash.h>
@@ -54,8 +54,13 @@ uint256 ComputeMerkleRoot(std::vector<uint256> hashes, bool* mutated) {
         if (hashes.size() & 1) {
             hashes.push_back(hashes.back());
         }
-        SHA256D64(hashes[0].begin(), hashes[0].begin(), hashes.size() / 2);
-        hashes.resize(hashes.size() / 2);
+        // Compute next level with BLAKE3-based hashing of each pair
+        std::vector<uint256> next;
+        next.reserve(hashes.size() / 2);
+        for (size_t i = 0; i < hashes.size(); i += 2) {
+            next.push_back(Hash(hashes[i], hashes[i+1]));
+        }
+        hashes.swap(next);
     }
     if (mutated) *mutated = mutation;
     if (hashes.size() == 0) return uint256();

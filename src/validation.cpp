@@ -1,7 +1,7 @@
-// Copyright (c) 2009-2010 Satoshi Nakamoto
-// Copyright (c) 2009-present The Bitcoin Core developers
-// Distributed under the MIT software license, see the accompanying
-// file COPYING or http://www.opensource.org/licenses/mit-license.php.
+// 
+//   2009-present 
+//    
+//  
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -20,6 +20,8 @@
 #include <cuckoocache.h>
 #include <flatfile.h>
 #include <hash.h>
+#include <crypto/pqc.h>
+#include <gsl/span>
 #include <kernel/chain.h>
 #include <kernel/chainparams.h>
 #include <kernel/coinstats.h>
@@ -4059,6 +4061,18 @@ bool CheckBlock(const CBlock& block, BlockValidationState& state, const Consensu
     if (consensusParams.signet_blocks && fCheckPOW && !CheckSignetBlockSolution(block, consensusParams)) {
         return state.Invalid(BlockValidationResult::BLOCK_CONSENSUS, "bad-signet-blksig", "signet block signature validation failure");
     }
+    // Post-quantum block header signature verification (Dilithium)
+    if (fCheckPOW) {
+        if (block.headerPubKey.empty() || block.headerSig.empty()) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-blk-pqcsig", "missing Dilithium header signature");
+        }
+        // Verify signature over the header hash
+        uint256 hdr = block.GetHash();
+        gsl::span<const uint8_t> msg(reinterpret_cast<const uint8_t*>(hdr.begin()), hdr.size());
+        if (!CDilithiumKey::Verify(block.headerPubKey, msg, gsl::span<const uint8_t>(block.headerSig.data(), block.headerSig.size()))) {
+            return state.Invalid(BlockValidationResult::BLOCK_INVALID_HEADER, "bad-blk-pqcsig", "invalid Dilithium header signature");
+        }
+    }
 
     // Check the merkle root.
     if (fCheckMerkleRoot && !CheckMerkleRoot(block, state)) {
@@ -4205,7 +4219,7 @@ arith_uint256 CalculateClaimedHeadersWork(std::span<const CBlockHeader> headers)
  *
  *  NOTE: failing to check the header's height against the last checkpoint's opened a DoS vector between
  *  v0.12 and v0.15 (when no additional protection was in place) whereby an attacker could unboundedly
- *  grow our in-memory block index. See https://bitcoincore.org/en/2024/07/03/disclose-header-spam.
+ *  grow our in-memory block index. See  /en/2024/07/03/disclose-header-spam.
  */
 static bool ContextualCheckBlockHeader(const CBlockHeader& block, BlockValidationState& state, BlockManager& blockman, const ChainstateManager& chainman, const CBlockIndex* pindexPrev) EXCLUSIVE_LOCKS_REQUIRED(::cs_main)
 {
