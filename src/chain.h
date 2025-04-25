@@ -186,6 +186,9 @@ public:
     uint32_t nTime{0};
     uint32_t nBits{0};
     uint32_t nNonce{0};
+    // Dilithium3 public key and signature for the block header (post-quantum safety)
+    std::vector<unsigned char> headerPubKey;
+    std::vector<unsigned char> headerSig;
 
     //! (memory only) Sequential id assigned to distinguish order in which blocks are received.
     int32_t nSequenceId{0};
@@ -356,7 +359,8 @@ class CDiskBlockIndex : public CBlockIndex
      * Hard-code to the highest client version ever written.
      * SerParams can be used if the field requires any meaning in the future.
      **/
-    static constexpr int DUMMY_VERSION = 259900;
+    // Incremented to force reindexing when database format changed (quantum-safe fields added)
+    static constexpr int DUMMY_VERSION = 260000;
 
 public:
     uint256 hashPrev;
@@ -391,6 +395,9 @@ public:
         READWRITE(obj.nTime);
         READWRITE(obj.nBits);
         READWRITE(obj.nNonce);
+        // Post-quantum header fields: public key and signature
+        READWRITE(obj.headerPubKey);
+        READWRITE(obj.headerSig);
     }
 
     uint256 ConstructBlockHash() const

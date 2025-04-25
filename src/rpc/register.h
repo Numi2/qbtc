@@ -1,9 +1,8 @@
-//     22 
-//    
-//  
 
-#ifndef BITCOIN_RPC_REGISTER_H
-#define BITCOIN_RPC_REGISTER_H
+// src/rpc/register.h
+
+#ifndef QUBITCOIN_RPC_REGISTER_H
+#define QUBITCOIN_RPC_REGISTER_H
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -44,4 +43,4 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable &t)
     RegisterPQCCommands(t);
 }
 
-#endif // BITCOIN_RPC_REGISTER_H
+#endif // QUBITCOIN_RPC_REGISTER_H

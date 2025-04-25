@@ -1,9 +1,7 @@
-//   2017-2022 
-//    
-//  
 
-#ifndef BITCOIN_RPC_MEMPOOL_H
-#define BITCOIN_RPC_MEMPOOL_H
+
+#ifndef QUBITCOIN_RPC_MEMPOOL_H
+#define QUBITCOIN_RPC_MEMPOOL_H
 
 class CTxMemPool;
 class UniValue;
@@ -14,4 +12,4 @@ UniValue MempoolInfoToJSON(const CTxMemPool& pool);
 /** Mempool to JSON */
 UniValue MempoolToJSON(const CTxMemPool& pool, bool verbose = false, bool include_mempool_sequence = false);
 
-#endif // BITCOIN_RPC_MEMPOOL_H
+#endif // QUBITCOIN_RPC_MEMPOOL_H

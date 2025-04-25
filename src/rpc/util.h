@@ -1,9 +1,8 @@
-//   2017-2022 
-//    
-//  
 
-#ifndef BITCOIN_RPC_UTIL_H
-#define BITCOIN_RPC_UTIL_H
+// src/rpc/util.h
+
+#ifndef QUBITCOIN_RPC_UTIL_H
+#define QUBITCOIN_RPC_UTIL_H
 
 #include <addresstype.h>
 #include <consensus/amount.h>
@@ -526,4 +525,4 @@ std::vector<RPCResult> ScriptPubKeyDoc();
  */
 uint256 GetTarget(const CBlockIndex& blockindex, const uint256 pow_limit);
 
-#endif // BITCOIN_RPC_UTIL_H
+#endif // QUBITCOIN_RPC_UTIL_H

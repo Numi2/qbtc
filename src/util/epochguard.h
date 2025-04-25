@@ -1,8 +1,8 @@
  
-//  
+// src/util/epochguard.h
 
-#ifndef BITCOIN_UTIL_EPOCHGUARD_H
-#define BITCOIN_UTIL_EPOCHGUARD_H
+#ifndef QUBITCOIN_UTIL_EPOCHGUARD_H
+#define QUBITCOIN_UTIL_EPOCHGUARD_H
 
 #include <threadsafety.h>
 #include <util/macros.h>
@@ -97,4 +97,4 @@ public:
 
 #define WITH_FRESH_EPOCH(epoch) const Epoch::Guard UNIQUE_NAME(epoch_guard_)(epoch)
 
-#endif // BITCOIN_UTIL_EPOCHGUARD_H
+#endif // QUBITCOIN_UTIL_EPOCHGUARD_H

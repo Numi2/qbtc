@@ -1,10 +1,8 @@
-//   2010 Satoshi Nakamoto
-//     21 
-//    
-//  
 
-#ifndef BITCOIN_RPC_SERVER_H
-#define BITCOIN_RPC_SERVER_H
+// src/rpc/server.h
+
+#ifndef QUBITCOIN_RPC_SERVER_H
+#define QUBITCOIN_RPC_SERVER_H
 
 #include <rpc/request.h>
 #include <rpc/util.h>
@@ -175,4 +173,4 @@ void InterruptRPC();
 void StopRPC();
 UniValue JSONRPCExec(const JSONRPCRequest& jreq, bool catch_errors);
 
-#endif // BITCOIN_RPC_SERVER_H
+#endif // QUBITCOIN_RPC_SERVER_H

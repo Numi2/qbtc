@@ -1,9 +1,7 @@
-//   2019-2022 
-//    
-//  
+// src/util/check.h
 
-#ifndef BITCOIN_UTIL_CHECK_H
-#define BITCOIN_UTIL_CHECK_H
+#ifndef QUBITCOIN_UTIL_CHECK_H
+#define QUBITCOIN_UTIL_CHECK_H
 
 #include <attributes.h>
 
@@ -126,4 +124,4 @@ constexpr T&& inline_assertion_check(LIFETIMEBOUND T&& val, [[maybe_unused]] con
 
 // NOLINTEND(bugprone-lambda-function-name)
 
-#endif // BITCOIN_UTIL_CHECK_H
+#endif // QUBITCOIN_UTIL_CHECK_H

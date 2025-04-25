@@ -1,9 +1,8 @@
-//   2021-present 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_MIGRATE_H
-#define BITCOIN_WALLET_MIGRATE_H
+// src/wallet/migrate.h
+
+#ifndef QUBITCOIN_WALLET_MIGRATE_H
+#define QUBITCOIN_WALLET_MIGRATE_H
 
 #include <wallet/db.h>
 
@@ -122,4 +121,4 @@ public:
 std::unique_ptr<BerkeleyRODatabase> MakeBerkeleyRODatabase(const fs::path& path, const DatabaseOptions& options, DatabaseStatus& status, bilingual_str& error);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_MIGRATE_H
+#endif // QUBITCOIN_WALLET_MIGRATE_H

@@ -1,10 +1,8 @@
-// 
-//   2009-present 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_DB_H
-#define BITCOIN_WALLET_DB_H
+// src/wallet/db.h
+
+#ifndef QUBITCOIN_WALLET_DB_H
+#define QUBITCOIN_WALLET_DB_H
 
 #include <clientversion.h>
 #include <streams.h>
@@ -228,4 +226,4 @@ bool IsBDBFile(const fs::path& path);
 bool IsSQLiteFile(const fs::path& path);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_DB_H
+#endif // QUBITCOIN_WALLET_DB_H

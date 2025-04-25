@@ -1,9 +1,8 @@
- 
-//  
+// src/policy/settings.h
 
-#ifndef BITCOIN_POLICY_SETTINGS_H
-#define BITCOIN_POLICY_SETTINGS_H
+#ifndef QUBITCOIN_POLICY_SETTINGS_H
+#define QUBITCOIN_POLICY_SETTINGS_H
 
 extern unsigned int nBytesPerSigOp;
 
-#endif // BITCOIN_POLICY_SETTINGS_H
+#endif // QUBITCOIN_POLICY_SETTINGS_H

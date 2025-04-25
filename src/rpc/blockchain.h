@@ -1,9 +1,7 @@
-//   2017-2022 
-//    
-//  
+// src/rpc/blockchain.h
 
-#ifndef BITCOIN_RPC_BLOCKCHAIN_H
-#define BITCOIN_RPC_BLOCKCHAIN_H
+#ifndef QUBITCOIN_RPC_BLOCKCHAIN_H
+#define QUBITCOIN_RPC_BLOCKCHAIN_H
 
 #include <consensus/amount.h>
 #include <core_io.h>
@@ -59,4 +57,4 @@ UniValue CreateUTXOSnapshot(
 std::optional<int> GetPruneHeight(const node::BlockManager& blockman, const CChain& chain) EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
 void CheckBlockDataAvailability(node::BlockManager& blockman, const CBlockIndex& blockindex, bool check_for_undo) EXCLUSIVE_LOCKS_REQUIRED(::cs_main);
 
-#endif // BITCOIN_RPC_BLOCKCHAIN_H
+#endif // QUBITCOIN_RPC_BLOCKCHAIN_H

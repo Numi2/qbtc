@@ -1,10 +1,8 @@
-// 
-//     20 
-//    
-//  
 
-#ifndef BITCOIN_SCRIPT_SCRIPT_ERROR_H
-#define BITCOIN_SCRIPT_SCRIPT_ERROR_H
+// src/script/script_error.h
+
+#ifndef QUBITCOIN_SCRIPT_SCRIPT_ERROR_H
+#define QUBITCOIN_SCRIPT_SCRIPT_ERROR_H
 
 #include <string>
 
@@ -89,4 +87,4 @@ typedef enum ScriptError_t
 
 std::string ScriptErrorString(const ScriptError error);
 
-#endif // BITCOIN_SCRIPT_SCRIPT_ERROR_H
+#endif // QUBITCOIN_SCRIPT_SCRIPT_ERROR_H

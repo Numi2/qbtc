@@ -1,9 +1,7 @@
-//   2022 
-//    
-//  
+// src/util/bitdeque.h
 
-#ifndef BITCOIN_UTIL_BITDEQUE_H
-#define BITCOIN_UTIL_BITDEQUE_H
+#ifndef QUBITCOIN_UTIL_BITDEQUE_H
+#define QUBITCOIN_UTIL_BITDEQUE_H
 
 #include <bitset>
 #include <cstddef>
@@ -465,4 +463,4 @@ public:
     }
 };
 
-#endif // BITCOIN_UTIL_BITDEQUE_H
+#endif // QUBITCOIN_UTIL_BITDEQUE_H

@@ -1,9 +1,7 @@
-//   2017-2022 
-//    
-//  
+// src/rpc/rawtransaction_util.h
 
-#ifndef BITCOIN_RPC_RAWTRANSACTION_UTIL_H
-#define BITCOIN_RPC_RAWTRANSACTION_UTIL_H
+#ifndef QUBITCOIN_RPC_RAWTRANSACTION_UTIL_H
+#define QUBITCOIN_RPC_RAWTRANSACTION_UTIL_H
 
 #include <addresstype.h>
 #include <consensus/amount.h>
@@ -55,4 +53,4 @@ void AddOutputs(CMutableTransaction& rawTx, const UniValue& outputs_in);
 /** Create a transaction from univalue parameters */
 CMutableTransaction ConstructTransaction(const UniValue& inputs_in, const UniValue& outputs_in, const UniValue& locktime, std::optional<bool> rbf);
 
-#endif // BITCOIN_RPC_RAWTRANSACTION_UTIL_H
+#endif // QUBITCOIN_RPC_RAWTRANSACTION_UTIL_H

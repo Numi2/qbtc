@@ -22,5 +22,15 @@ target_sources(test_bitcoin
     wallet_transaction_tests.cpp
     walletdb_tests.cpp
     walletload_tests.cpp
+    blockindex_qs_tests.cpp
+    serialization_qs_tests.cpp
+    hash_qs_tests.cpp
+    net_qs_tests.cpp
+    pqckeys_tests.cpp
 )
-target_link_libraries(test_bitcoin bitcoin_wallet)
+target_link_libraries(test_bitcoin
+    bitcoin_wallet
+    bitcoin_node
+    bitcoin_crypto
+    bitcoin_common
+)

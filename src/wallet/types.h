@@ -1,6 +1,5 @@
- 
-//    
-//  
+
+// src/wallet/types.h
 
 //! @file wallet/types.h is a home for public enum and struct type definitions
 //! that are used by internally by wallet code, but also used externally by node
@@ -10,8 +9,8 @@
 //! dependencies. More complicated public wallet types like CCoinControl should
 //! be defined in dedicated header files.
 
-#ifndef BITCOIN_WALLET_TYPES_H
-#define BITCOIN_WALLET_TYPES_H
+#ifndef QUBITCOIN_WALLET_TYPES_H
+#define QUBITCOIN_WALLET_TYPES_H
 
 #include <type_traits>
 
@@ -64,4 +63,4 @@ enum class AddressPurpose {
 };
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_TYPES_H
+#endif // QUBITCOIN_WALLET_TYPES_H

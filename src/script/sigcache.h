@@ -1,10 +1,8 @@
-// 
-//   2009-present 
-//    
-//  
 
-#ifndef BITCOIN_SCRIPT_SIGCACHE_H
-#define BITCOIN_SCRIPT_SIGCACHE_H
+// src/script/sigcache.h
+
+#ifndef QUBITCOIN_SCRIPT_SIGCACHE_H
+#define QUBITCOIN_SCRIPT_SIGCACHE_H
 
 #include <consensus/amount.h>
 #include <crypto/sha256.h>
@@ -73,4 +71,4 @@ public:
     bool VerifySchnorrSignature(std::span<const unsigned char> sig, const XOnlyPubKey& pubkey, const uint256& sighash) const override;
 };
 
-#endif // BITCOIN_SCRIPT_SIGCACHE_H
+#endif // QUBITCOIN_SCRIPT_SIGCACHE_H

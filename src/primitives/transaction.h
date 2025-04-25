@@ -1,8 +1,8 @@
- 
+// src/primitives/transaction.h
 //  
 
-#ifndef BITCOIN_PRIMITIVES_TRANSACTION_H
-#define BITCOIN_PRIMITIVES_TRANSACTION_H
+#ifndef QUBITCOIN_PRIMITIVES_TRANSACTION_H
+#define QUBITCOIN_PRIMITIVES_TRANSACTION_H
 
 #include <attributes.h>
 #include <consensus/amount.h>
@@ -437,4 +437,4 @@ public:
     friend bool operator<(const GenTxid& a, const GenTxid& b) { return std::tie(a.m_is_wtxid, a.m_hash) < std::tie(b.m_is_wtxid, b.m_hash); }
 };
 
-#endif // BITCOIN_PRIMITIVES_TRANSACTION_H
+#endif // QUBITCOIN_PRIMITIVES_TRANSACTION_H

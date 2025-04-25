@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/script/script.h
 
-#ifndef BITCOIN_SCRIPT_SCRIPT_H
-#define BITCOIN_SCRIPT_SCRIPT_H
+#ifndef QUBITCOIN_SCRIPT_SCRIPT_H
+#define QUBITCOIN_SCRIPT_SCRIPT_H
 
 #include <attributes.h>
 #include <crypto/common.h>
@@ -638,4 +635,4 @@ CScript BuildScript(Ts&&... inputs)
     return ret;
 }
 
-#endif // BITCOIN_SCRIPT_SCRIPT_H
+#endif // QUBITCOIN_SCRIPT_SCRIPT_H

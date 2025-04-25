@@ -1,8 +1,8 @@
 // src/random.h
 
 
-#ifndef BITCOIN_RANDOM_H
-#define BITCOIN_RANDOM_H
+#ifndef QUBITCOIN_RANDOM_H
+#define QUBITCOIN_RANDOM_H
 
 #include <crypto/chacha20.h>
 #include <crypto/common.h>
@@ -463,4 +463,4 @@ inline uint256 GetRandHash() noexcept
  */
 bool Random_SanityCheck();
 
-#endif // BITCOIN_RANDOM_H
+#endif // QUBITCOIN_RANDOM_H

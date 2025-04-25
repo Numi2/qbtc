@@ -1,9 +1,8 @@
-//   
-//    
-//  
 
-#ifndef BITCOIN_UTIL_FEEFRAC_H
-#define BITCOIN_UTIL_FEEFRAC_H
+// src/util/feefrac.h
+
+#ifndef QUBITCOIN_UTIL_FEEFRAC_H
+#define QUBITCOIN_UTIL_FEEFRAC_H
 
 #include <stdint.h>
 #include <compare>
@@ -254,4 +253,4 @@ using FeePerVSize = FeePerUnit<VSizeTag>;
 struct WeightTag {};
 using FeePerWeight = FeePerUnit<WeightTag>;
 
-#endif // BITCOIN_UTIL_FEEFRAC_H
+#endif // QUBITCOIN_UTIL_FEEFRAC_H

@@ -1,9 +1,8 @@
-//   2020-present 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_SQLITE_H
-#define BITCOIN_WALLET_SQLITE_H
+// src/wallet/sqlite.h
+
+#ifndef QUBITCOIN_WALLET_SQLITE_H
+#define QUBITCOIN_WALLET_SQLITE_H
 
 #include <sync.h>
 #include <wallet/db.h>
@@ -183,4 +182,4 @@ std::unique_ptr<SQLiteDatabase> MakeSQLiteDatabase(const fs::path& path, const D
 std::string SQLiteDatabaseVersion();
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_SQLITE_H
+#endif // QUBITCOIN_WALLET_SQLITE_H

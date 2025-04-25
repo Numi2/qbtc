@@ -1,5 +1,7 @@
-#ifndef BITCOIN_UTIL_BLAKE3_TAGGED_H
-#define BITCOIN_UTIL_BLAKE3_TAGGED_H
+// src/util/blake3_tagged.h
+
+#ifndef QUBITCOIN_UTIL_BLAKE3_TAGGED_H
+#define QUBITCOIN_UTIL_BLAKE3_TAGGED_H
 
 #include <crypto/blake3.h>
 #include <util/span.h>
@@ -45,4 +47,4 @@ inline std::vector<uint8_t> TaggedBlake3Hash(const std::string& tag, const std::
     return writer.GetHash();
 }
 
-#endif // BITCOIN_UTIL_BLAKE3_TAGGED_H
+#endif // QUBITCOIN_UTIL_BLAKE3_TAGGED_H

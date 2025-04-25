@@ -1,9 +1,8 @@
-//   2018-2022 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_FASTRANGE_H
-#define BITCOIN_UTIL_FASTRANGE_H
+// src/util/fastrange.h 
+
+#ifndef QUBITCOIN_UTIL_FASTRANGE_H
+#define QUBITCOIN_UTIL_FASTRANGE_H
 
 #include <cstdint>
 
@@ -48,4 +47,4 @@ static inline uint64_t FastRange64(uint64_t x, uint64_t n)
 #endif
 }
 
-#endif // BITCOIN_UTIL_FASTRANGE_H
+#endif // QUBITCOIN_UTIL_FASTRANGE_H

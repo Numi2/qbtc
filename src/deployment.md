@@ -23,6 +23,21 @@ This document outlines the steps to launch and maintain a thriving Qubitcoin net
    - Dilithium3 signature limits reflected in `MAX_BLOCK_WEIGHT=111000000` and `MAX_BLOCK_SIGOPS_COST=800000`
    - Bloom filters use BLAKE3 (implement via `blockfilter.cpp`).
 
+### 2.X Quantum-Safe Enhancements
+- Hashing: BLAKE3-256 replaces SHA256 for all hashing (blocks, transactions, UTXO DB keys).
+- Block header extended (in `primitives/block.h`):
+  - New fields `headerPubKey` (Dilithium3 public key) and `headerSig` (Dilithium3 signature) serialized immediately after `nNonce`.
+  - Blocks are signed by the mining node using Dilithium3; verification enforced in `validation.cpp`.
+- BlockIndex database schema change:
+  - `CDiskBlockIndex::DUMMY_VERSION` bumped to `260000`, forcing a one-time full reindex (`-reindex` or implicit on start).
+  - Legacy Bitcoin (`bitcoind`) block-index formats are incompatible.
+- Transaction scripts use Dilithium3 only; legacy ECDSA has been removed.
+- New address format: Bech32m `qbc1p...` for Dilithium3 public keys (see `OutputType::P2PQ`).
+- RPC `pqc` namespace commands (`rpc/pqccmds.cpp`): generate key, sign message, verify signature.
+- Testing:
+  - Unit tests for quantum-safe features are in `wallet/test/*_qs_tests.cpp`.
+  - Run `ctest -R qs` to execute all quantum-safe tests.
+
 ### 3. Seed Node Deployment
 1. Provision at least three geographically distributed, high-uptime servers.
 2. Install Qubitcoin (`qubitcoind`) on each.

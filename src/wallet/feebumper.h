@@ -1,9 +1,8 @@
-//   2017-2021 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_FEEBUMPER_H
-#define BITCOIN_WALLET_FEEBUMPER_H
+// src/wallet/feebumper.h
+
+#ifndef QUBITCOIN_WALLET_FEEBUMPER_H
+#define QUBITCOIN_WALLET_FEEBUMPER_H
 
 #include <consensus/consensus.h>
 #include <script/interpreter.h>
@@ -124,4 +123,4 @@ public:
 } // namespace feebumper
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_FEEBUMPER_H
+#endif // QUBITCOIN_WALLET_FEEBUMPER_H

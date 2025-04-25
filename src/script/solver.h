@@ -1,12 +1,9 @@
-// 
-//   2009-present 
-//    
-//  
 
+// src/script/solver.h
 // The Solver functions are used by policy and the wallet, but not consensus.
 
-#ifndef BITCOIN_SCRIPT_SOLVER_H
-#define BITCOIN_SCRIPT_SOLVER_H
+#ifndef QUBITCOIN_SCRIPT_SOLVER_H
+#define QUBITCOIN_SCRIPT_SOLVER_H
 
 #include <attributes.h>
 #include <script/script.h>
@@ -64,4 +61,4 @@ std::optional<std::pair<int, std::vector<std::span<const unsigned char>>>> Match
 /** Generate a multisig script. */
 CScript GetScriptForMultisig(int nRequired, const std::vector<CPubKey>& keys);
 
-#endif // BITCOIN_SCRIPT_SOLVER_H
+#endif // QUBITCOIN_SCRIPT_SOLVER_H

@@ -1,10 +1,8 @@
-//   2010 Satoshi Nakamoto
-//     18 
-//    
-//  
 
-#ifndef BITCOIN_RPC_CLIENT_H
-#define BITCOIN_RPC_CLIENT_H
+// src/rpc/client.h
+
+#ifndef QUBITCOIN_RPC_CLIENT_H
+#define QUBITCOIN_RPC_CLIENT_H
 
 #include <string>
 #include <string_view>
@@ -17,4 +15,4 @@ UniValue RPCConvertValues(const std::string& strMethod, const std::vector<std::s
 /** Convert named arguments to command-specific RPC representation */
 UniValue RPCConvertNamedValues(const std::string& strMethod, const std::vector<std::string>& strParams);
 
-#endif // BITCOIN_RPC_CLIENT_H
+#endif // QUBITCOIN_RPC_CLIENT_H

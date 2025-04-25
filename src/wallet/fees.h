@@ -1,9 +1,7 @@
- 
-//    
-//  
+// src/wallet/fees.h
 
-#ifndef BITCOIN_WALLET_FEES_H
-#define BITCOIN_WALLET_FEES_H
+#ifndef QUBITCOIN_WALLET_FEES_H
+#define QUBITCOIN_WALLET_FEES_H
 
 #include <consensus/amount.h>
 
@@ -44,4 +42,4 @@ CFeeRate GetMinimumFeeRate(const CWallet& wallet, const CCoinControl& coin_contr
 CFeeRate GetDiscardRate(const CWallet& wallet);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_FEES_H
+#endif // QUBITCOIN_WALLET_FEES_H

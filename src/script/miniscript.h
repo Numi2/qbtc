@@ -1,9 +1,8 @@
-//   2019-present 
-//    
-//  
 
-#ifndef BITCOIN_SCRIPT_MINISCRIPT_H
-#define BITCOIN_SCRIPT_MINISCRIPT_H
+// src/script/miniscript.h
+
+#ifndef QUBITCOIN_SCRIPT_MINISCRIPT_H
+#define QUBITCOIN_SCRIPT_MINISCRIPT_H
 
 #include <algorithm>
 #include <compare>
@@ -2660,4 +2659,4 @@ inline NodeRef<typename Ctx::Key> FromScript(const CScript& script, const Ctx& c
 
 } // namespace miniscript
 
-#endif // BITCOIN_SCRIPT_MINISCRIPT_H
+#endif // QUBITCOIN_SCRIPT_MINISCRIPT_H

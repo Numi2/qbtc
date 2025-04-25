@@ -1,9 +1,8 @@
-//   2018-present 
-//    
-//  
 
-#ifndef BITCOIN_SCRIPT_PARSING_H
-#define BITCOIN_SCRIPT_PARSING_H
+// src/script/parsing.h
+
+#ifndef QUBITCOIN_SCRIPT_PARSING_H
+#define QUBITCOIN_SCRIPT_PARSING_H
 
 #include <span.h>
 
@@ -37,4 +36,4 @@ std::span<const char> Expr(std::span<const char>& sp);
 
 } // namespace script
 
-#endif // BITCOIN_SCRIPT_PARSING_H
+#endif // QUBITCOIN_SCRIPT_PARSING_H

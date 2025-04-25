@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/script/signingprovider.h
 
-#ifndef BITCOIN_SCRIPT_SIGNINGPROVIDER_H
-#define BITCOIN_SCRIPT_SIGNINGPROVIDER_H
+#ifndef QUBITCOIN_SCRIPT_SIGNINGPROVIDER_H
+#define QUBITCOIN_SCRIPT_SIGNINGPROVIDER_H
 
 #include <addresstype.h>
 #include <attributes.h>
@@ -316,4 +313,4 @@ public:
     bool GetTaprootBuilder(const XOnlyPubKey& output_key, TaprootBuilder& builder) const override;
 };
 
-#endif // BITCOIN_SCRIPT_SIGNINGPROVIDER_H
+#endif // QUBITCOIN_SCRIPT_SIGNINGPROVIDER_H

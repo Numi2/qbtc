@@ -1,9 +1,8 @@
-//   2019-2022 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_BIP32_H
-#define BITCOIN_UTIL_BIP32_H
+// src/util/bip32.h
+
+#ifndef QUBITCOIN_UTIL_BIP32_H
+#define QUBITCOIN_UTIL_BIP32_H
 
 #include <cstdint>
 #include <string>
@@ -16,4 +15,4 @@
 std::string WriteHDKeypath(const std::vector<uint32_t>& keypath, bool apostrophe = false);
 std::string FormatHDKeypath(const std::vector<uint32_t>& path, bool apostrophe = false);
 
-#endif // BITCOIN_UTIL_BIP32_H
+#endif // QUBITCOIN_UTIL_BIP32_H

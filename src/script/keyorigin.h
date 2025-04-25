@@ -1,9 +1,7 @@
-//   2019-2020 
-//    
-//  
+// src/script/keyorigin.h
 
-#ifndef BITCOIN_SCRIPT_KEYORIGIN_H
-#define BITCOIN_SCRIPT_KEYORIGIN_H
+#ifndef QUBITCOIN_SCRIPT_KEYORIGIN_H
+#define QUBITCOIN_SCRIPT_KEYORIGIN_H
 
 #include <serialize.h>
 #include <vector>
@@ -46,4 +44,4 @@ struct KeyOriginInfo
     }
 };
 
-#endif // BITCOIN_SCRIPT_KEYORIGIN_H
+#endif // QUBITCOIN_SCRIPT_KEYORIGIN_H

@@ -1,10 +1,8 @@
-//   2010 Satoshi Nakamoto
-//     21 
-//    
-//  
 
-#ifndef BITCOIN_RPC_REQUEST_H
-#define BITCOIN_RPC_REQUEST_H
+// src/rpc/request.h
+
+#ifndef QUBITCOIN_RPC_REQUEST_H
+#define QUBITCOIN_RPC_REQUEST_H
 
 #include <any>
 #include <optional>
@@ -49,4 +47,4 @@ public:
     [[nodiscard]] bool IsNotification() const { return !id.has_value() && m_json_version == JSONRPCVersion::V2; };
 };
 
-#endif // BITCOIN_RPC_REQUEST_H
+#endif // QUBITCOIN_RPC_REQUEST_H

@@ -128,6 +128,9 @@ bool BlockTreeDB::LoadBlockIndexGuts(const Consensus::Params& consensusParams, s
                 pindexNew->nTime          = diskindex.nTime;
                 pindexNew->nBits          = diskindex.nBits;
                 pindexNew->nNonce         = diskindex.nNonce;
+                // Post-quantum header fields: copy public key and signature
+                pindexNew->headerPubKey   = diskindex.headerPubKey;
+                pindexNew->headerSig      = diskindex.headerSig;
                 pindexNew->nStatus        = diskindex.nStatus;
                 pindexNew->nTx            = diskindex.nTx;
 

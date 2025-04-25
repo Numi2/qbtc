@@ -1,9 +1,8 @@
-//   2018-2022 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_GOLOMBRICE_H
-#define BITCOIN_UTIL_GOLOMBRICE_H
+// src/util/golombrice.h
+
+#ifndef QUBITCOIN_UTIL_GOLOMBRICE_H
+#define QUBITCOIN_UTIL_GOLOMBRICE_H
 
 #include <util/fastrange.h>
 
@@ -42,4 +41,4 @@ uint64_t GolombRiceDecode(BitStreamReader<IStream>& bitreader, uint8_t P)
     return (q << P) + r;
 }
 
-#endif // BITCOIN_UTIL_GOLOMBRICE_H
+#endif // QUBITCOIN_UTIL_GOLOMBRICE_H

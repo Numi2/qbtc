@@ -1,10 +1,8 @@
-// 
-//     23 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_FS_HELPERS_H
-#define BITCOIN_UTIL_FS_HELPERS_H
+// src/util/fs_helpers.h
+
+#ifndef QUBITCOIN_UTIL_FS_HELPERS_H
+#define QUBITCOIN_UTIL_FS_HELPERS_H
 
 #include <util/fs.h>
 
@@ -80,4 +78,4 @@ std::optional<fs::perms> InterpretPermString(const std::string& s);
 fs::path GetSpecialFolderPath(int nFolder, bool fCreate = true);
 #endif
 
-#endif // BITCOIN_UTIL_FS_HELPERS_H
+#endif // QUBITCOIN_UTIL_FS_HELPERS_H

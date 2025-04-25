@@ -1,9 +1,8 @@
-//   2025-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_BYTE_UNITS_H
-#define BITCOIN_UTIL_BYTE_UNITS_H
+// src/util/byte_units.h
+
+#ifndef QUBITCOIN_UTIL_BYTE_UNITS_H
+#define QUBITCOIN_UTIL_BYTE_UNITS_H
 
 #include <util/overflow.h>
 
@@ -19,4 +18,4 @@ constexpr size_t operator""_MiB(unsigned long long mebibytes)
     return *bytes;
 }
 
-#endif // BITCOIN_UTIL_BYTE_UNITS_H
+#endif // QUBITCOIN_UTIL_BYTE_UNITS_H

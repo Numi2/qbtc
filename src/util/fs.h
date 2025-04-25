@@ -1,9 +1,8 @@
-//   2017-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_FS_H
-#define BITCOIN_UTIL_FS_H
+// src/util/fs.h
+
+#ifndef QUBITCOIN_UTIL_FS_H
+#define QUBITCOIN_UTIL_FS_H
 
 #include <tinyformat.h>
 
@@ -250,4 +249,4 @@ template<> inline void formatValue(std::ostream&, const char*, const char*, int,
 template<> inline void formatValue(std::ostream&, const char*, const char*, int, const fs::path&) = delete;
 } // namespace tinyformat
 
-#endif // BITCOIN_UTIL_FS_H
+#endif // QUBITCOIN_UTIL_FS_H
