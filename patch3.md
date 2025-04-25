@@ -146,3 +146,37 @@
 
 
 
+3.4
+
+
+    • util/blake3_tagged.{h,cpp}
+      – Blake3Writer implements a “tagged‐hash” API identical to the SHA256 “HashWriter”
+     but using Blake3 under the hood.
+      – TaggedBlake3Hash(tag, data) for one‐shot use.
+
+    • script/interpreter.cpp
+      – Pulled in util/blake3_tagged.h.
+      – Replaced the old extern HashWriter declarations with new extern Blake3Writer 
+    HASHER_BLAKE3_TAPSIGHASH/TAPLEAF/TAPBRANCH.
+      – Added definitions for those three writers (tagged with “TapSighash”, “TapLeaf”
+    and “TapBranch”).
+
+    Next step is to switch the actual signature‐hash routines:
+
+        1. In the **SegWit v0** path of `SignatureHash(…)` (around the “V0” block),
+    replace the double‐SHA256 constructions for `hashPrevouts`, `hashSequence`, and
+    `hashOutputs` with single‐Blake3 *tagged* hashes over the same data.
+        2. In **Taproot**’s `TaprootSignatureHash(…)` code block, swap out the
+    `HASHER_TAPSIGHASH`‐based single‐SHA256(s) with `HASHER_BLAKE3_TAPSIGHASH` to build
+    the transaction digest.
+        3. In **script/sign.cpp**’s `SignPSBTInput(...)`, add a branch for `sigversion
+    == SigVersion::TAPROOT` that calls the new Blake3‐based `TaprootSignatureHash`, then
+     feeds that 32‐byte digest into `SignDilithium3` (instead of Schnorr) to produce a
+    valid on‐chain Dilithium signature.
+        4. In **wallet/scriptpubkeyman.cpp**, ensure that PSBTs/raw‐tx signing for v1
+    witness scripts also invoke this new path (using our `CPQCKeyStore` to look up the
+    raw privkey and call `SignDilithium3`).
+
+    This will give you exactly the same on‐chain sighash data as consensus, but with
+    Blake3 in place of SHA256d, and Dilithium in place of Schnorr/ECDSA. Im gonna proceed with those precise code changes in script/interpreter.cpp,
+    script/sign.cpp, and the wallet PSBT layers next!
