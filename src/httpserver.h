@@ -1,9 +1,8 @@
-//   2015-2022 
-//    
-//  
 
-#ifndef BITCOIN_HTTPSERVER_H
-#define BITCOIN_HTTPSERVER_H
+// src/httpserver.h
+
+#ifndef QUBITCOIN_HTTPSERVER_H
+#define QUBITCOIN_HTTPSERVER_H
 
 #include <functional>
 #include <optional>
@@ -191,4 +190,4 @@ private:
     struct event* ev;
 };
 
-#endif // BITCOIN_HTTPSERVER_H
+#endif // QUBITCOIN_HTTPSERVER_H

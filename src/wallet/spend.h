@@ -1,6 +1,7 @@
- //
-#ifndef BITCOIN_WALLET_SPEND_H
-#define BITCOIN_WALLET_SPEND_H
+ // src/wallet/spend.h
+
+#ifndef QUBITCOIN_WALLET_SPEND_H
+#define QUBITCOIN_WALLET_SPEND_H
 
 #include <consensus/amount.h>
 #include <policy/fees.h> // for FeeCalculation
@@ -224,4 +225,4 @@ util::Result<CreatedTransactionResult> CreateTransaction(CWallet& wallet, const 
 util::Result<CreatedTransactionResult> FundTransaction(CWallet& wallet, const CMutableTransaction& tx, const std::vector<CRecipient>& recipients, std::optional<unsigned int> change_pos, bool lockUnspents, CCoinControl);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_SPEND_H
+#endif // QUBITCOIN_WALLET_SPEND_H

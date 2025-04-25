@@ -1,9 +1,8 @@
-//   2016-2020 
-//    
-//  
 
-#ifndef BITCOIN_INDIRECTMAP_H
-#define BITCOIN_INDIRECTMAP_H
+// src/indirectmap.h
+
+#ifndef QUBITCOIN_INDIRECTMAP_H
+#define QUBITCOIN_INDIRECTMAP_H
 
 #include <map>
 
@@ -55,4 +54,4 @@ public:
     const_iterator cend() const     { return m.cend(); }
 };
 
-#endif // BITCOIN_INDIRECTMAP_H
+#endif // QUBITCOIN_INDIRECTMAP_H

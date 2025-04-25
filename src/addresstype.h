@@ -1,9 +1,8 @@
-//  
-//    
- 
+            
+// src/addresstype.h
 
-#ifndef BITCOIN_ADDRESSTYPE_H
-#define BITCOIN_ADDRESSTYPE_H
+#ifndef QUBITCOIN_ADDRESSTYPE_H
+#define QUBITCOIN_ADDRESSTYPE_H
 
 #include <attributes.h>
 #include <pubkey.h>
@@ -164,4 +163,4 @@ bool ExtractDestination(const CScript& scriptPubKey, CTxDestination& addressRet)
  */
 CScript GetScriptForDestination(const CTxDestination& dest);
 
-#endif // BITCOIN_ADDRESSTYPE_H
+#endif // QUBITCOIN_ADDRESSTYPE_H

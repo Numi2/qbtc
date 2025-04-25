@@ -1,9 +1,7 @@
-//   2017-2021 
-//    
-//  
+// src/wallet/walletutil.h
 
-#ifndef BITCOIN_WALLET_WALLETUTIL_H
-#define BITCOIN_WALLET_WALLETUTIL_H
+#ifndef QUBITCOIN_WALLET_WALLETUTIL_H
+#define QUBITCOIN_WALLET_WALLETUTIL_H
 
 #include <script/descriptor.h>
 #include <util/fs.h>
@@ -122,4 +120,4 @@ public:
 WalletDescriptor GenerateWalletDescriptor(const CExtPubKey& master_key, const OutputType& output_type, bool internal);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_WALLETUTIL_H
+#endif // QUBITCOIN_WALLET_WALLETUTIL_H

@@ -1,9 +1,7 @@
-//   2014-2020 
-//    
-//  
+// src/chainparamsbase.h
 
-#ifndef BITCOIN_CHAINPARAMSBASE_H
-#define BITCOIN_CHAINPARAMSBASE_H
+#ifndef QUBITCOIN_CHAINPARAMSBASE_H
+#define QUBITCOIN_CHAINPARAMSBASE_H
 
 #include <util/chaintype.h>
 
@@ -55,4 +53,4 @@ void SelectBaseParams(const ChainType chain);
 #define LIST_CHAIN_NAMES \
     "main, qubit, test, qubit-test, testnet4, signet, regtest"
 
-#endif // BITCOIN_CHAINPARAMSBASE_H
+#endif // QUBITCOIN_CHAINPARAMSBASE_H

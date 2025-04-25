@@ -1,6 +1,7 @@
- //
-#ifndef BITCOIN_ADDRMAN_IMPL_H
-#define BITCOIN_ADDRMAN_IMPL_H
+ // src/addrman_impl.h  
+
+#ifndef QUBITCOIN_ADDRMAN_IMPL_H
+#define QUBITCOIN_ADDRMAN_IMPL_H
 
 #include <logging.h>
 #include <logging/timer.h>
@@ -289,4 +290,4 @@ private:
     int CheckAddrman() const EXCLUSIVE_LOCKS_REQUIRED(cs);
 };
 
-#endif // BITCOIN_ADDRMAN_IMPL_H
+#endif // QUBITCOIN_ADDRMAN_IMPL_H

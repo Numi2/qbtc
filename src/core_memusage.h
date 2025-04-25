@@ -1,9 +1,7 @@
-//   2015-2018 
-//    
-//  
+// src/core_memusage.h  
 
-#ifndef BITCOIN_CORE_MEMUSAGE_H
-#define BITCOIN_CORE_MEMUSAGE_H
+#ifndef QUBITCOIN_CORE_MEMUSAGE_H
+#define QUBITCOIN_CORE_MEMUSAGE_H
 
 #include <primitives/transaction.h>
 #include <primitives/block.h>
@@ -68,4 +66,4 @@ static inline size_t RecursiveDynamicUsage(const std::shared_ptr<X>& p) {
     return p ? memusage::DynamicUsage(p) + RecursiveDynamicUsage(*p) : 0;
 }
 
-#endif // BITCOIN_CORE_MEMUSAGE_H
+#endif // QUBITCOIN_CORE_MEMUSAGE_H

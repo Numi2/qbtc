@@ -1,9 +1,7 @@
-//   2012-2022 
-//    
-//  
+// src/checkqueue.h
 
-#ifndef BITCOIN_CHECKQUEUE_H
-#define BITCOIN_CHECKQUEUE_H
+#ifndef QUBITCOIN_CHECKQUEUE_H
+#define QUBITCOIN_CHECKQUEUE_H
 
 #include <logging.h>
 #include <sync.h>
@@ -248,4 +246,4 @@ public:
     }
 };
 
-#endif // BITCOIN_CHECKQUEUE_H
+#endif // QUBITCOIN_CHECKQUEUE_H

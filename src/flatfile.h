@@ -1,10 +1,8 @@
-// 
-//     20 
-//    
-//  
 
-#ifndef BITCOIN_FLATFILE_H
-#define BITCOIN_FLATFILE_H
+// src/flatfile.h
+
+#ifndef QUBITCOIN_FLATFILE_H
+#define QUBITCOIN_FLATFILE_H
 
 #include <string>
 
@@ -86,4 +84,4 @@ public:
     bool Flush(const FlatFilePos& pos, bool finalize = false) const;
 };
 
-#endif // BITCOIN_FLATFILE_H
+#endif // QUBITCOIN_FLATFILE_H

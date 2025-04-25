@@ -1,9 +1,8 @@
-//   2009-present 
-//    
-//  
 
-#ifndef BITCOIN_NETADDRESS_H
-#define BITCOIN_NETADDRESS_H
+// src/netaddress.h
+
+#ifndef QUBITCOIN_NETADDRESS_H
+#define QUBITCOIN_NETADDRESS_H
 
 #include <compat/compat.h>
 #include <crypto/siphash.h>
@@ -595,4 +594,4 @@ private:
     const uint64_t m_salt_k1;
 };
 
-#endif // BITCOIN_NETADDRESS_H
+#endif // QUBITCOIN_NETADDRESS_H

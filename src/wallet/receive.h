@@ -1,6 +1,7 @@
- //
-#ifndef BITCOIN_WALLET_RECEIVE_H
-#define BITCOIN_WALLET_RECEIVE_H
+ // src/wallet/receive.h
+
+#ifndef QUBITCOIN_WALLET_RECEIVE_H
+#define QUBITCOIN_WALLET_RECEIVE_H
 
 #include <consensus/amount.h>
 #include <wallet/transaction.h>
@@ -59,4 +60,4 @@ std::map<CTxDestination, CAmount> GetAddressBalances(const CWallet& wallet);
 std::set<std::set<CTxDestination>> GetAddressGroupings(const CWallet& wallet) EXCLUSIVE_LOCKS_REQUIRED(wallet.cs_wallet);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_RECEIVE_H
+#endif // QUBITCOIN_WALLET_RECEIVE_H

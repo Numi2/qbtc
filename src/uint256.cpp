@@ -1,7 +1,4 @@
-// 
-//     20 
-//    
-//  
+// src/uint256.cpp
 
 #include <uint256.h>
 

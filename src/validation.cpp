@@ -1,7 +1,4 @@
-// 
-//   2009-present 
-//    
-//  
+// src/validation.cpp
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 

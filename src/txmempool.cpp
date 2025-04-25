@@ -1,6 +1,4 @@
- 
-//  
-
+// src/txmempool.cpp
 #include <txmempool.h>
 
 #include <chain.h>

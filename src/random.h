@@ -1,7 +1,5 @@
-// 
-//   2009-present 
-//    
-//  
+// src/random.h
+
 
 #ifndef BITCOIN_RANDOM_H
 #define BITCOIN_RANDOM_H

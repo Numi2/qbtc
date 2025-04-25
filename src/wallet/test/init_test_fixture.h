@@ -1,9 +1,7 @@
-//   2018-2021 
-//    
-//  
+// src/wallet/test/init_test_fixture.h
 
-#ifndef BITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
-#define BITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
+#ifndef QUBITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
+#define QUBITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
 
 #include <interfaces/chain.h>
 #include <interfaces/wallet.h>
@@ -24,5 +22,5 @@ struct InitWalletDirTestingSetup: public BasicTestingSetup {
     std::unique_ptr<interfaces::WalletLoader> m_wallet_loader;
 };
 
-#endif // BITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
+#endif // QUBITCOIN_WALLET_TEST_INIT_TEST_FIXTURE_H
 } // namespace wallet

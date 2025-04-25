@@ -1,10 +1,7 @@
-//   2012 Pieter Wuille
-//   2012-2022 
-//    
-//  
+// src/addrman.h
 
-#ifndef BITCOIN_ADDRMAN_H
-#define BITCOIN_ADDRMAN_H
+#ifndef QUBITCOIN_ADDRMAN_H
+#define QUBITCOIN_ADDRMAN_H
 
 #include <netaddress.h>
 #include <netgroup.h>
@@ -211,4 +208,4 @@ public:
     std::optional<AddressPosition> FindAddressEntry(const CAddress& addr);
 };
 
-#endif // BITCOIN_ADDRMAN_H
+#endif // QUBITCOIN_ADDRMAN_H

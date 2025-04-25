@@ -1,100 +1,112 @@
-//   2019-present 
-//    
-//  
+// src/util/hasher.h
 
-#ifndef BITCOIN_UTIL_HASHER_H
-#define BITCOIN_UTIL_HASHER_H
+#ifndef QUBITCOIN_UTIL_HASHER_H
+#define QUBITCOIN_UTIL_HASHER_H
+// src/util/hasher.hpp
+#pragma once
 
-#include <crypto/common.h>
-#include <crypto/siphash.h>
-#include <primitives/transaction.h>
-#include <span.h>
-#include <uint256.h>
-
+#include <array>
+#include <cstddef>
 #include <cstdint>
-#include <cstring>
+#include <random>
+#include <span.h>
+#include <primitives/transaction.h>
+#include <uint256.h>
+#include <crypto/blake3.h>
 
-class SaltedTxidHasher
-{
-private:
-    /** Salt */
-    const uint64_t k0, k1;
+/** Utility hashing functors for QuBitcoin (BLAKE3-based, quantum-safe). */
+namespace qubitcoin::util {
 
+/** BLAKE3-keyed hasher for txids. */
+class SaltedTxidHasher {
+    std::array<uint8_t, 32> key_;
 public:
-    SaltedTxidHasher();
-
-    size_t operator()(const uint256& txid) const {
-        return SipHashUint256(k0, k1, txid);
+    SaltedTxidHasher() noexcept {
+        std::random_device rd;
+        for (auto& b : key_) b = rd();
+    }
+    size_t operator()(const uint256& txid) const noexcept {
+        blake3_hasher h;
+        blake3_hasher_init_keyed(&h, key_.data());
+        blake3_hasher_update(&h, txid.begin(), txid.size());
+        uint64_t out;
+        blake3_hasher_finalize(&h, reinterpret_cast<uint8_t*>(&out), sizeof(out));
+        return static_cast<size_t>(out);
     }
 };
 
-class SaltedOutpointHasher
-{
-private:
-    /** Salt */
-    const uint64_t k0, k1;
-
+/** BLAKE3-keyed hasher for outpoints. */
+class SaltedOutpointHasher {
+    std::array<uint8_t, 32> key_;
 public:
-    SaltedOutpointHasher(bool deterministic = false);
-
-    /**
-     * Having the hash noexcept allows libstdc++'s unordered_map to recalculate
-     * the hash during rehash, so it does not have to cache the value. This
-     * reduces node's memory by sizeof(size_t). The required recalculation has
-     * a slight performance penalty (around 1.6%), but this is compensated by
-     * memory savings of about 9% which allow for a larger dbcache setting.
-     *
-     * @see https://gcc.gnu.org/onlinedocs/gcc-13.2.0/libstdc++/manual/manual/unordered_associative.html
-     */
-    size_t operator()(const COutPoint& id) const noexcept {
-        return SipHashUint256Extra(k0, k1, id.hash, id.n);
+    explicit SaltedOutpointHasher(bool deterministic = false) noexcept {
+        if (deterministic) {
+            key_.fill(0);
+        } else {
+            std::random_device rd;
+            for (auto& b : key_) b = rd();
+        }
+    }
+    size_t operator()(const COutPoint& out) const noexcept {
+        blake3_hasher h;
+        blake3_hasher_init_keyed(&h, key_.data());
+        blake3_hasher_update(&h, out.hash.begin(), out.hash.size());
+        uint64_t n = out.n;
+        blake3_hasher_update(&h, reinterpret_cast<const uint8_t*>(&n), sizeof(n));
+        uint64_t out64;
+        blake3_hasher_finalize(&h, reinterpret_cast<uint8_t*>(&out64), sizeof(out64));
+        return static_cast<size_t>(out64);
     }
 };
 
-struct FilterHeaderHasher
-{
-    size_t operator()(const uint256& hash) const { return ReadLE64(hash.begin()); }
-};
-
-/**
- * We're hashing a nonce into the entries themselves, so we don't need extra
- * blinding in the set hash computation.
- *
- * This may exhibit platform endian dependent behavior but because these are
- * nonced hashes (random) and this state is only ever used locally it is safe.
- * All that matters is local consistency.
- */
-class SignatureCacheHasher
-{
-public:
-    template <uint8_t hash_select>
-    uint32_t operator()(const uint256& key) const
-    {
-        static_assert(hash_select <8, "SignatureCacheHasher only has 8 hashes available.");
-        uint32_t u;
-        std::memcpy(&u, key.begin()+4*hash_select, 4);
-        return u;
+/** Simple 64-bit hasher: first 8 bytes of a BLAKE3 hash. */
+struct FilterHeaderHasher {
+    size_t operator()(const uint256& h) const noexcept {
+        return ReadLE64(h.begin());
     }
 };
 
-struct BlockHasher
-{
-    // this used to call `GetCheapHash()` in uint256, which was later moved; the
-    // cheap hash function simply calls ReadLE64() however, so the end result is
-    // identical
-    size_t operator()(const uint256& hash) const { return ReadLE64(hash.begin()); }
-};
-
-class SaltedSipHasher
-{
-private:
-    /** Salt */
-    const uint64_t m_k0, m_k1;
-
+/** Map a 256-bit key into 32-bit via 4-byte slice. */
+class SignatureCacheHasher {
 public:
-    SaltedSipHasher();
-
-    size_t operator()(const std::span<const unsigned char>& script) const;
+    template <uint8_t I>
+    uint32_t operator()(const uint256& k) const noexcept {
+        static_assert(I < 8, "Index out of range");
+        uint32_t v;
+        std::memcpy(&v, k.begin() + I * 4, 4);
+        return v;
+    }
 };
 
-#endif // BITCOIN_UTIL_HASHER_H
+/** Same as FilterHeaderHasher for block hashes. */
+struct BlockHasher {
+    size_t operator()(const uint256& h) const noexcept {
+        return ReadLE64(h.begin());
+    }
+};
+
+/** BLAKE3-keyed hasher for arbitrary scripts. */
+class SaltedScriptHasher {
+    std::array<uint8_t, 32> key_;
+public:
+    SaltedScriptHasher() noexcept {
+        std::random_device rd;
+        for (auto& b : key_) b = rd();
+    }
+    size_t operator()(std::span<const std::byte> script) const noexcept {
+        blake3_hasher h;
+        blake3_hasher_init_keyed(&h, key_.data());
+        blake3_hasher_update(
+            &h,
+            reinterpret_cast<const uint8_t*>(script.data()),
+            script.size()
+        );
+        uint64_t out;
+        blake3_hasher_finalize(&h, reinterpret_cast<uint8_t*>(&out), sizeof(out));
+        return static_cast<size_t>(out);
+    }
+};
+
+} // namespace qubitcoin::util
+
+#endif // QUBITCOIN_UTIL_HASHER_H

@@ -1,9 +1,7 @@
-//   
-//    
-//  
+// src/cluster_linearize.h
 
-#ifndef BITCOIN_CLUSTER_LINEARIZE_H
-#define BITCOIN_CLUSTER_LINEARIZE_H
+#ifndef QUBITCOIN_CLUSTER_LINEARIZE_H
+#define QUBITCOIN_CLUSTER_LINEARIZE_H
 
 #include <algorithm>
 #include <numeric>
@@ -1393,4 +1391,4 @@ void FixLinearization(const DepGraph<SetType>& depgraph, std::span<DepGraphIndex
 
 } // namespace cluster_linearize
 
-#endif // BITCOIN_CLUSTER_LINEARIZE_H
+#endif // QUBITCOIN_CLUSTER_LINEARIZE_H

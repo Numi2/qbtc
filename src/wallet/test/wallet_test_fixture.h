@@ -1,9 +1,8 @@
-//     
-//    
-//  
 
-#ifndef BITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H
-#define BITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H
+// src/wallet/test/wallet_test_fixture.h
+
+#ifndef QUBITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H
+#define QUBITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H
 
 #include <test/util/setup_common.h>
 
@@ -29,4 +28,4 @@ struct WalletTestingSetup : public TestingSetup {
 };
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H
+#endif // QUBITCOIN_WALLET_TEST_WALLET_TEST_FIXTURE_H

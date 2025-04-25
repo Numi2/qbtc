@@ -1,9 +1,8 @@
-//   2020-2021 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_HASH_TYPE_H
-#define BITCOIN_UTIL_HASH_TYPE_H
+// src/util/hash_type.h
+
+#ifndef QUBITCOIN_UTIL_HASH_TYPE_H
+#define QUBITCOIN_UTIL_HASH_TYPE_H
 
 template <typename HashType>
 class BaseHash
@@ -69,4 +68,4 @@ public:
     const unsigned char* data() const { return m_hash.data(); }
 };
 
-#endif // BITCOIN_UTIL_HASH_TYPE_H
+#endif // QUBITCOIN_UTIL_HASH_TYPE_H

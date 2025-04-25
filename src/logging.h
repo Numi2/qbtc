@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/logging.h
 
-#ifndef BITCOIN_LOGGING_H
-#define BITCOIN_LOGGING_H
+#ifndef QUBITCOIN_LOGGING_H
+#define QUBITCOIN_LOGGING_H
 
 #include <threadsafety.h>
 #include <tinyformat.h>
@@ -280,4 +277,4 @@ inline void LogPrintFormatInternal(std::string_view logging_function, std::strin
 #define LogDebug(category, ...) LogPrintLevel(category, BCLog::Level::Debug, __VA_ARGS__)
 #define LogTrace(category, ...) LogPrintLevel(category, BCLog::Level::Trace, __VA_ARGS__)
 
-#endif // BITCOIN_LOGGING_H
+#endif // QUBITCOIN_LOGGING_H

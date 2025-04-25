@@ -1,6 +1,7 @@
- //
-#ifndef BITCOIN_UTIL_OVERFLOW_H
-#define BITCOIN_UTIL_OVERFLOW_H
+ // src/util/overflow.h
+
+#ifndef QUBITCOIN_UTIL_OVERFLOW_H
+#define QUBITCOIN_UTIL_OVERFLOW_H
 
 #include <climits>
 #include <concepts>
@@ -80,4 +81,4 @@ constexpr T SaturatingLeftShift(T input, unsigned shift) noexcept
     return input < 0 ? std::numeric_limits<T>::min() : std::numeric_limits<T>::max();
 }
 
-#endif // BITCOIN_UTIL_OVERFLOW_H
+#endif // QUBITCOIN_UTIL_OVERFLOW_H

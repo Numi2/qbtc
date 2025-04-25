@@ -1,5 +1,4 @@
- 
-//  
+// src/validationinterface.cpp
 
 #include <validationinterface.h>
 

@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/net_processing.h
 
-#ifndef BITCOIN_NET_PROCESSING_H
-#define BITCOIN_NET_PROCESSING_H
+#ifndef QUBITCOIN_NET_PROCESSING_H
+#define QUBITCOIN_NET_PROCESSING_H
 
 #include <consensus/amount.h>
 #include <net.h>
@@ -167,4 +164,4 @@ public:
     virtual ServiceFlags GetDesirableServiceFlags(ServiceFlags services) const = 0;
 };
 
-#endif // BITCOIN_NET_PROCESSING_H
+#endif // QUBITCOIN_NET_PROCESSING_H

@@ -1,9 +1,7 @@
-//     
-//    
-//  
+// src/blockencodings.h
 
-#ifndef BITCOIN_BLOCKENCODINGS_H
-#define BITCOIN_BLOCKENCODINGS_H
+#ifndef QUBITCOIN_BLOCKENCODINGS_H
+#define QUBITCOIN_BLOCKENCODINGS_H
 
 #include <primitives/block.h>
 
@@ -152,4 +150,4 @@ public:
     ReadStatus FillBlock(CBlock& block, const std::vector<CTransactionRef>& vtx_missing);
 };
 
-#endif // BITCOIN_BLOCKENCODINGS_H
+#endif // QUBITCOIN_BLOCKENCODINGS_H

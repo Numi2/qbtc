@@ -1,9 +1,7 @@
-//   2019-2021 
-//    
-//  
+// src/net_types.h
 
-#ifndef BITCOIN_NET_TYPES_H
-#define BITCOIN_NET_TYPES_H
+#ifndef QUBITCOIN_NET_TYPES_H
+#define QUBITCOIN_NET_TYPES_H
 
 #include <cstdint>
 #include <map>
@@ -57,4 +55,4 @@ UniValue BanMapToJson(const banmap_t& bans);
  */
 void BanMapFromJson(const UniValue& bans_json, banmap_t& bans);
 
-#endif // BITCOIN_NET_TYPES_H
+#endif // QUBITCOIN_NET_TYPES_H

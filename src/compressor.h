@@ -1,10 +1,8 @@
-// 
-//   2009-present 
-//    
-//  
+// src/compressor.h 
 
-#ifndef BITCOIN_COMPRESSOR_H
-#define BITCOIN_COMPRESSOR_H
+
+#ifndef QUBITCOIN_COMPRESSOR_H
+#define QUBITCOIN_COMPRESSOR_H
 
 #include <prevector.h>
 #include <primitives/transaction.h>
@@ -115,4 +113,4 @@ struct TxOutCompression
     FORMATTER_METHODS(CTxOut, obj) { READWRITE(Using<AmountCompression>(obj.nValue), Using<ScriptCompression>(obj.scriptPubKey)); }
 };
 
-#endif // BITCOIN_COMPRESSOR_H
+#endif // QUBITCOIN_COMPRESSOR_H

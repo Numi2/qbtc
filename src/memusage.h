@@ -1,9 +1,8 @@
-//   2015-2022 
-//    
-//  
 
-#ifndef BITCOIN_MEMUSAGE_H
-#define BITCOIN_MEMUSAGE_H
+// src/memusage.h
+
+#ifndef QUBITCOIN_MEMUSAGE_H
+#define QUBITCOIN_MEMUSAGE_H
 
 #include <indirectmap.h>
 #include <prevector.h>
@@ -217,4 +216,4 @@ static inline size_t DynamicUsage(const std::unordered_map<Key,
 
 } // namespace memusage
 
-#endif // BITCOIN_MEMUSAGE_H
+#endif // QUBITCOIN_MEMUSAGE_H

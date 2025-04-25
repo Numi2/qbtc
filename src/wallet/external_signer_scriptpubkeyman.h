@@ -1,9 +1,8 @@
-//   2019-2021 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H
-#define BITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H
+// src/wallet/external_signer_scriptpubkeyman.h
+
+#ifndef QUBITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H
+#define QUBITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H
 
 #include <wallet/scriptpubkeyman.h>
 
@@ -38,4 +37,4 @@ class ExternalSignerScriptPubKeyMan : public DescriptorScriptPubKeyMan
   std::optional<common::PSBTError> FillPSBT(PartiallySignedTransaction& psbt, const PrecomputedTransactionData& txdata, int sighash_type = 1 /* SIGHASH_ALL */, bool sign = true, bool bip32derivs = false, int* n_signed = nullptr, bool finalize = true) const override;
 };
 } // namespace wallet
-#endif // BITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H
+#endif // QUBITCOIN_WALLET_EXTERNAL_SIGNER_SCRIPTPUBKEYMAN_H

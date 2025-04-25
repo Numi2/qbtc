@@ -1,9 +1,7 @@
-//   2016 Jeremy Rubin
-//    
-//  
+// src/cuckoocache.h
 
-#ifndef BITCOIN_CUCKOOCACHE_H
-#define BITCOIN_CUCKOOCACHE_H
+#ifndef QUBITCOIN_CUCKOOCACHE_H
+#define QUBITCOIN_CUCKOOCACHE_H
 
 #include <util/fastrange.h>
 
@@ -485,4 +483,4 @@ public:
 };
 } // namespace CuckooCache
 
-#endif // BITCOIN_CUCKOOCACHE_H
+#endif // QUBITCOIN_CUCKOOCACHE_H

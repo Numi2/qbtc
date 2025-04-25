@@ -1,9 +1,7 @@
-//   2016-present 
-//    
-//  
+// src/wallet/rpc/wallet.h
 
-#ifndef BITCOIN_WALLET_RPC_WALLET_H
-#define BITCOIN_WALLET_RPC_WALLET_H
+#ifndef QUBITCOIN_WALLET_RPC_WALLET_H
+#define QUBITCOIN_WALLET_RPC_WALLET_H
 
 #include <span.h>
 
@@ -13,4 +11,4 @@ namespace wallet {
 std::span<const CRPCCommand> GetWalletRPCCommands();
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_RPC_WALLET_H
+#endif // QUBITCOIN_WALLET_RPC_WALLET_H

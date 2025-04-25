@@ -1,37 +1,33 @@
-//   2019-2021 
-//    
-//  
+// src/signet.h
 
-#ifndef BITCOIN_SIGNET_H
-#define BITCOIN_SIGNET_H
+#ifndef QUBITCOIN_SIGNET_H
+#define QUBITCOIN_SIGNET_H
 
 #include <consensus/params.h>
 #include <primitives/block.h>
 #include <primitives/transaction.h>
-
 #include <optional>
 
 /**
- * Extract signature and check whether a block has a valid solution
+ * Verify that a Signet block carries a valid quantum-safe (Dilithium) signature solution.
  */
-bool CheckSignetBlockSolution(const CBlock& block, const Consensus::Params& consensusParams);
+bool CheckSignetBlockSolution(const CBlock& block, const Consensus::Params& params);
 
 /**
- * Generate the signet tx corresponding to the given block
- *
- * The signet tx commits to everything in the block except:
- * 1. It hashes a modified merkle root with the signet signature removed.
- * 2. It skips the nonce.
+ * Build the two special transactions for a Signet block:
+ *  - m_to_spend: commits to all block data except the Dilithium signature
+ *  - m_to_sign:  contains the Dilithium signature itself
  */
 class SignetTxs {
     template<class T1, class T2>
-    SignetTxs(const T1& to_spend, const T2& to_sign) : m_to_spend{to_spend}, m_to_sign{to_sign} { }
+    SignetTxs(const T1& to_spend, const T2& to_sign)
+        : m_to_spend{to_spend}, m_to_sign{to_sign} {}
 
 public:
     static std::optional<SignetTxs> Create(const CBlock& block, const CScript& challenge);
 
-    const CTransaction m_to_spend;
-    const CTransaction m_to_sign;
+    CTransaction m_to_spend;
+    CTransaction m_to_sign;
 };
 
-#endif // BITCOIN_SIGNET_H
+#endif // QUBITCOIN_SIGNET_H

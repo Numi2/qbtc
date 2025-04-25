@@ -1,9 +1,8 @@
-//   2021-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_OVERLOADED_H
-#define BITCOIN_UTIL_OVERLOADED_H
+// src/util/overloaded.h
+
+#ifndef QUBITCOIN_UTIL_OVERLOADED_H
+#define QUBITCOIN_UTIL_OVERLOADED_H
 
 namespace util {
 //! Overloaded helper for std::visit. This helper and std::visit in general are
@@ -19,4 +18,4 @@ template<class... Ts> struct Overloaded : Ts... { using Ts::operator()...; };
 template<class... Ts> Overloaded(Ts...) -> Overloaded<Ts...>;
 } // namespace util
 
-#endif // BITCOIN_UTIL_OVERLOADED_H
+#endif // QUBITCOIN_UTIL_OVERLOADED_H

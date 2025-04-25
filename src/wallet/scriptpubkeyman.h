@@ -1,9 +1,8 @@
-//   2019-2022 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_SCRIPTPUBKEYMAN_H
-#define BITCOIN_WALLET_SCRIPTPUBKEYMAN_H
+// src/wallet/scriptpubkeyman.h
+
+#ifndef QUBITCOIN_WALLET_SCRIPTPUBKEYMAN_H
+#define QUBITCOIN_WALLET_SCRIPTPUBKEYMAN_H
 
 #include <addresstype.h>
 #include <common/messages.h>
@@ -722,4 +721,4 @@ struct MigrationData
 
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_SCRIPTPUBKEYMAN_H
+#endif // QUBITCOIN_WALLET_SCRIPTPUBKEYMAN_H

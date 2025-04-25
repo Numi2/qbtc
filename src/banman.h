@@ -1,7 +1,6 @@
- 
-//  
-#ifndef BITCOIN_BANMAN_H
-#define BITCOIN_BANMAN_H
+// src/banman.h
+#ifndef QUBITCOIN_BANMAN_H
+#define QUBITCOIN_BANMAN_H
 
 #include <addrdb.h>
 #include <common/bloom.h>
@@ -96,4 +95,4 @@ private:
     CRollingBloomFilter m_discouraged GUARDED_BY(m_banned_mutex) {50000, 0.000001};
 };
 
-#endif // BITCOIN_BANMAN_H
+#endif // QUBITCOIN_BANMAN_H

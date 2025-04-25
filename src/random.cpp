@@ -1,7 +1,5 @@
-// 
-//   2009-present 
-//    
-//  
+// src/random.cpp   
+
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 

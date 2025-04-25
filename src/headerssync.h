@@ -1,9 +1,8 @@
-//   2022 
-//    
-//  
 
-#ifndef BITCOIN_HEADERSSYNC_H
-#define BITCOIN_HEADERSSYNC_H
+// src/headerssync.h
+
+#ifndef QUBITCOIN_HEADERSSYNC_H
+#define QUBITCOIN_HEADERSSYNC_H
 
 #include <arith_uint256.h>
 #include <chain.h>
@@ -275,4 +274,4 @@ private:
     State m_download_state{State::PRESYNC};
 };
 
-#endif // BITCOIN_HEADERSSYNC_H
+#endif // QUBITCOIN_HEADERSSYNC_H

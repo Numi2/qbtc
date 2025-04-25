@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/validation.h
 
-#ifndef BITCOIN_VALIDATION_H
-#define BITCOIN_VALIDATION_H
+#ifndef QUBITCOIN_VALIDATION_H
+#define QUBITCOIN_VALIDATION_H
 
 #include <arith_uint256.h>
 #include <attributes.h>
@@ -1352,4 +1349,4 @@ bool IsBIP30Repeat(const CBlockIndex& block_index);
 /** Identifies blocks which coinbase output was subsequently overwritten in the UTXO set (see BIP30) */
 bool IsBIP30Unspendable(const CBlockIndex& block_index);
 
-#endif // BITCOIN_VALIDATION_H
+#endif // QUBITCOIN_VALIDATION_H

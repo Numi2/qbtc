@@ -1,9 +1,8 @@
-//   2015-2021 
-//    
-//  
 
-#ifndef BITCOIN_HTTPRPC_H
-#define BITCOIN_HTTPRPC_H
+// src/httprpc.h
+
+#ifndef QUBITCOIN_HTTPRPC_H
+#define QUBITCOIN_HTTPRPC_H
 
 #include <any>
 
@@ -31,4 +30,4 @@ void InterruptREST();
  */
 void StopREST();
 
-#endif // BITCOIN_HTTPRPC_H
+#endif // QUBITCOIN_HTTPRPC_H

@@ -1,9 +1,8 @@
-//   2012-present 
-//    
-//  
 
-#ifndef BITCOIN_DBWRAPPER_H
-#define BITCOIN_DBWRAPPER_H
+// src/dbwrapper.h
+
+#ifndef QUBITCOIN_DBWRAPPER_H
+#define QUBITCOIN_DBWRAPPER_H
 
 #include <attributes.h>
 #include <serialize.h>
@@ -293,4 +292,4 @@ public:
     }
 };
 
-#endif // BITCOIN_DBWRAPPER_H
+#endif // QUBITCOIN_DBWRAPPER_H

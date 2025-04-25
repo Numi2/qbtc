@@ -1,9 +1,8 @@
-//   2017-present 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_RPC_UTIL_H
-#define BITCOIN_WALLET_RPC_UTIL_H
+// src/wallet/rpc/util.h
+
+#ifndef QUBITCOIN_WALLET_RPC_UTIL_H
+#define QUBITCOIN_WALLET_RPC_UTIL_H
 
 #include <rpc/util.h>
 #include <script/script.h>
@@ -54,4 +53,4 @@ void HandleWalletError(const std::shared_ptr<CWallet> wallet, DatabaseStatus& st
 void AppendLastProcessedBlock(UniValue& entry, const CWallet& wallet) EXCLUSIVE_LOCKS_REQUIRED(wallet.cs_wallet);
 } //  namespace wallet
 
-#endif // BITCOIN_WALLET_RPC_UTIL_H
+#endif // QUBITCOIN_WALLET_RPC_UTIL_H

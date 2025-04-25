@@ -1,8 +1,8 @@
- 
-//  
+        
+// src/coins.h
 
-#ifndef BITCOIN_COINS_H
-#define BITCOIN_COINS_H
+#ifndef QUBITCOIN_COINS_H
+#define QUBITCOIN_COINS_H
 
 #include <compressor.h>
 #include <core_memusage.h>
@@ -524,4 +524,4 @@ private:
 
 };
 
-#endif // BITCOIN_COINS_H
+#endif // QUBITCOIN_COINS_H

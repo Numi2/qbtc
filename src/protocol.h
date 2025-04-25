@@ -1,5 +1,4 @@
- 
-//  
+// src/protocol.h
 
 #ifndef BITCOIN_PROTOCOL_H
 #define BITCOIN_PROTOCOL_H

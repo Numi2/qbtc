@@ -1,9 +1,7 @@
-//   2020-2022 
-//    
-//  
+// src/deploymentstatus.h
 
-#ifndef BITCOIN_DEPLOYMENTSTATUS_H
-#define BITCOIN_DEPLOYMENTSTATUS_H
+#ifndef QUBITCOIN_DEPLOYMENTSTATUS_H
+#define QUBITCOIN_DEPLOYMENTSTATUS_H
 
 #include <chain.h>
 #include <versionbits.h>
@@ -49,4 +47,4 @@ inline bool DeploymentEnabled(const Consensus::Params& params, Consensus::Deploy
     return params.vDeployments[dep].nStartTime != Consensus::BIP9Deployment::NEVER_ACTIVE;
 }
 
-#endif // BITCOIN_DEPLOYMENTSTATUS_H
+#endif // QUBITCOIN_DEPLOYMENTSTATUS_H

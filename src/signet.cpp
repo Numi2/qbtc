@@ -1,151 +1,136 @@
-//   2019-present 
-//    
-//  
+// src/signet.cpp
 
 #include <signet.h>
-
-#include <common/system.h>
-#include <consensus/merkle.h>
 #include <consensus/params.h>
-#include <consensus/validation.h>
-#include <core_io.h>
-#include <hash.h>
-#include <logging.h>
 #include <primitives/block.h>
 #include <primitives/transaction.h>
-#include <script/interpreter.h>
-#include <span.h>
 #include <streams.h>
 #include <uint256.h>
-#include <util/strencodings.h>
-
-#include <algorithm>
-#include <array>
-#include <cstdint>
+#include <span.h>
 #include <vector>
+#include <cstdint>
+#include <optional>
+
+#include <dilithium.h>        // CRYSTALS-Dilithium API
+#include <hash.h>             // ComputeMerkleRoot
+#include <util/strencodings.h>
 
 static constexpr uint8_t SIGNET_HEADER[4] = {0xec, 0xc7, 0xda, 0xa2};
 
-static constexpr unsigned int BLOCK_SCRIPT_VERIFY_FLAGS = SCRIPT_VERIFY_P2SH | SCRIPT_VERIFY_WITNESS | SCRIPT_VERIFY_DERSIG | SCRIPT_VERIFY_NULLDUMMY;
-
-static bool FetchAndClearCommitmentSection(const std::span<const uint8_t> header, CScript& witness_commitment, std::vector<uint8_t>& result)
+/*
+ * Strip out the bytes after SIGNET_HEADER from the witness_commitment script,
+ * return them in 'out'.  Returns true if found.
+ */
+static bool FetchAndClearCommitmentSection(const std::span<const uint8_t> header,
+                                           CScript& witness_commitment,
+                                           std::vector<uint8_t>& out)
 {
-    CScript replacement;
-    bool found_header = false;
-    result.clear();
-
-    opcodetype opcode;
+    CScript repl;
+    bool found = false;
+    std::vector<uint8_t> push;
     CScript::const_iterator pc = witness_commitment.begin();
-    std::vector<uint8_t> pushdata;
-    while (witness_commitment.GetOp(pc, opcode, pushdata)) {
-        if (pushdata.size() > 0) {
-            if (!found_header && pushdata.size() > header.size() && std::ranges::equal(std::span{pushdata}.first(header.size()), header)) {
-                // pushdata only counts if it has the header _and_ some data
-                result.insert(result.end(), pushdata.begin() + header.size(), pushdata.end());
-                pushdata.erase(pushdata.begin() + header.size(), pushdata.end());
-                found_header = true;
-            }
-            replacement << pushdata;
-        } else {
-            replacement << opcode;
+    opcodetype opcode;
+    while (witness_commitment.GetOp(pc, opcode, push)) {
+        if (!found && push.size() > header.size()
+            && std::memcmp(push.data(), header.data(), header.size()) == 0) {
+            out.insert(out.end(),
+                       push.begin() + header.size(),
+                       push.end());
+            push.resize(header.size());
+            found = true;
         }
+        repl << push;
+        push.clear();
     }
-
-    if (found_header) witness_commitment = replacement;
-    return found_header;
+    if (found) witness_commitment = repl;
+    return found;
 }
 
+/*
+ * Recompute merkle root treating the coinbase as modified_cb.
+ */
 static uint256 ComputeModifiedMerkleRoot(const CMutableTransaction& cb, const CBlock& block)
 {
-    std::vector<uint256> leaves;
-    leaves.resize(block.vtx.size());
+    std::vector<uint256> leaves(block.vtx.size());
     leaves[0] = cb.GetHash();
-    for (size_t s = 1; s < block.vtx.size(); ++s) {
-        leaves[s] = block.vtx[s]->GetHash();
-    }
+    for (size_t i = 1; i < block.vtx.size(); ++i)
+        leaves[i] = block.vtx[i]->GetHash();
     return ComputeMerkleRoot(std::move(leaves));
 }
 
 std::optional<SignetTxs> SignetTxs::Create(const CBlock& block, const CScript& challenge)
 {
-    CMutableTransaction tx_to_spend;
-    tx_to_spend.version = 0;
-    tx_to_spend.nLockTime = 0;
-    tx_to_spend.vin.emplace_back(COutPoint(), CScript(OP_0), 0);
-    tx_to_spend.vout.emplace_back(0, challenge);
+    if (block.vtx.empty()) return std::nullopt;
+    // Build the two signet tx skeletons
+    CMutableTransaction to_spend, to_sign;
+    to_spend.version = to_sign.version = 0;
+    to_spend.nLockTime = to_sign.nLockTime = 0;
+    to_spend.vin.emplace_back(COutPoint(), CScript(OP_0), 0);
+    to_spend.vout.emplace_back(0, challenge);
+    to_sign.vin.emplace_back(COutPoint(), CScript(), 0);
+    to_sign.vout.emplace_back(0, CScript(OP_RETURN));
 
-    CMutableTransaction tx_spending;
-    tx_spending.version = 0;
-    tx_spending.nLockTime = 0;
-    tx_spending.vin.emplace_back(COutPoint(), CScript(), 0);
-    tx_spending.vout.emplace_back(0, CScript(OP_RETURN));
-
-    // can't fill any other fields before extracting signet
-    // responses from block coinbase tx
-
-    // find and delete signet signature
-    if (block.vtx.empty()) return std::nullopt; // no coinbase tx in block; invalid
-    CMutableTransaction modified_cb(*block.vtx.at(0));
-
-    const int cidx = GetWitnessCommitmentIndex(block);
-    if (cidx == NO_WITNESS_COMMITMENT) {
-        return std::nullopt; // require a witness commitment
+    // Strip signature blob from coinbase commitment
+    CMutableTransaction mod_cb(*block.vtx[0]);
+    int idx = GetWitnessCommitmentIndex(block);
+    if (idx == NO_WITNESS_COMMITMENT) return std::nullopt;
+    std::vector<uint8_t> sig_blob;
+    if (FetchAndClearCommitmentSection(SIGNET_HEADER,
+                                       mod_cb.vout[idx].scriptPubKey,
+                                       sig_blob)) {
+        // sig_blob is raw Dilithium signature
+        // push into to_sign.vin[0].scriptSig
+        to_sign.vin[0].scriptSig << sig_blob;
     }
+    // Attach block data to to_spend
+    uint256 merkle = ComputeModifiedMerkleRoot(mod_cb, block);
+    std::vector<uint8_t> blob;
+    VectorWriter vw{blob, 0};
+    vw << block.nVersion
+       << block.hashPrevBlock
+       << merkle
+       << block.nTime;
+    to_spend.vin[0].scriptSig << blob;
+    // link the two txs
+    to_sign.vin[0].prevout = COutPoint(to_spend.GetHash(), 0);
 
-    CScript& witness_commitment = modified_cb.vout.at(cidx).scriptPubKey;
-
-    std::vector<uint8_t> signet_solution;
-    if (!FetchAndClearCommitmentSection(SIGNET_HEADER, witness_commitment, signet_solution)) {
-        // no signet solution -- allow this to support OP_TRUE as trivial block challenge
-    } else {
-        try {
-            SpanReader v{signet_solution};
-            v >> tx_spending.vin[0].scriptSig;
-            v >> tx_spending.vin[0].scriptWitness.stack;
-            if (!v.empty()) return std::nullopt; // extraneous data encountered
-        } catch (const std::exception&) {
-            return std::nullopt; // parsing error
-        }
-    }
-    uint256 signet_merkle = ComputeModifiedMerkleRoot(modified_cb, block);
-
-    std::vector<uint8_t> block_data;
-    VectorWriter writer{block_data, 0};
-    writer << block.nVersion;
-    writer << block.hashPrevBlock;
-    writer << signet_merkle;
-    writer << block.nTime;
-    tx_to_spend.vin[0].scriptSig << block_data;
-    tx_spending.vin[0].prevout = COutPoint(tx_to_spend.GetHash(), 0);
-
-    return SignetTxs{tx_to_spend, tx_spending};
+    return SignetTxs{to_spend, to_sign};
 }
 
-// Signet block solution checker
-bool CheckSignetBlockSolution(const CBlock& block, const Consensus::Params& consensusParams)
+bool CheckSignetBlockSolution(const CBlock& block, const Consensus::Params& p)
 {
-    if (block.GetHash() == consensusParams.hashGenesisBlock) {
-        // genesis block solution is always valid
-        return true;
-    }
+    if (block.GetHash() == p.hashGenesisBlock) return true;
 
-    const CScript challenge(consensusParams.signet_challenge.begin(), consensusParams.signet_challenge.end());
-    const std::optional<SignetTxs> signet_txs = SignetTxs::Create(block, challenge);
+    CScript challenge(p.signet_challenge.begin(), p.signet_challenge.end());
+    auto opt = SignetTxs::Create(block, challenge);
+    if (!opt) return false;
+    auto& tx = *opt;
 
-    if (!signet_txs) {
-        LogDebug(BCLog::VALIDATION, "CheckSignetBlockSolution: Errors in block (block solution parse failure)\n");
-        return false;
-    }
+    // extract pubkey from challenge (first push)
+    CScript::const_iterator pc = challenge.begin();
+    opcodetype op;
+    std::vector<uint8_t> pubkey;
+    challenge.GetOp(pc, op, pubkey);
 
-    const CScript& scriptSig = signet_txs->m_to_sign.vin[0].scriptSig;
-    const CScriptWitness& witness = signet_txs->m_to_sign.vin[0].scriptWitness;
+    // extract signature from to_sign.scriptSig (first push)
+    pc = tx.m_to_sign.vin[0].scriptSig.begin();
+    std::vector<uint8_t> sig;
+    tx.m_to_sign.vin[0].scriptSig.GetOp(pc, op, sig);
 
-    PrecomputedTransactionData txdata;
-    txdata.Init(signet_txs->m_to_sign, {signet_txs->m_to_spend.vout[0]});
-    TransactionSignatureChecker sigcheck(&signet_txs->m_to_sign, /* nInIn= */ 0, /* amountIn= */ signet_txs->m_to_spend.vout[0].nValue, txdata, MissingDataBehavior::ASSERT_FAIL);
+    // rebuild block_data
+    uint256 merkle = ComputeModifiedMerkleRoot(
+        CMutableTransaction(tx.m_to_spend.vin[0].scriptSig.restream().data()), block);
+    std::vector<uint8_t> data;
+    VectorWriter vw{data, 0};
+    vw << block.nVersion
+       << block.hashPrevBlock
+       << merkle
+       << block.nTime;
 
-    if (!VerifyScript(scriptSig, signet_txs->m_to_spend.vout[0].scriptPubKey, &witness, BLOCK_SCRIPT_VERIFY_FLAGS, sigcheck)) {
-        LogDebug(BCLog::VALIDATION, "CheckSignetBlockSolution: Errors in block (block solution invalid)\n");
+    // Dilithium verification
+    if (!DilithiumVerify(pubkey.data(), pubkey.size(),
+                         data.data(), data.size(),
+                         sig.data(), sig.size())) {
         return false;
     }
     return true;

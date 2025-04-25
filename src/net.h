@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/net.h
 
-#ifndef BITCOIN_NET_H
-#define BITCOIN_NET_H
+#ifndef QUBITCOIN_NET_H
+#define QUBITCOIN_NET_H
 
 #include <bip324.h>
 #include <chainparams.h>
@@ -1683,4 +1680,4 @@ extern std::function<void(const CAddress& addr,
                           bool is_incoming)>
     CaptureMessage;
 
-#endif // BITCOIN_NET_H
+#endif // QUBITCOIN_NET_H

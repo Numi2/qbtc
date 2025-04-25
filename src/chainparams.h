@@ -1,9 +1,7 @@
- 
-//    
-//  
+// src/chainparams.h
 
-#ifndef BITCOIN_CHAINPARAMS_H
-#define BITCOIN_CHAINPARAMS_H
+#ifndef QUBITCOIN_CHAINPARAMS_H
+#define QUBITCOIN_CHAINPARAMS_H
 
 #include <kernel/chainparams.h> // IWYU pragma: export
 
@@ -27,4 +25,4 @@ const CChainParams &Params();
  */
 void SelectParams(const ChainType chain);
 
-#endif // BITCOIN_CHAINPARAMS_H
+#endif // QUBITCOIN_CHAINPARAMS_H

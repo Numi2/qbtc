@@ -1,8 +1,8 @@
  
-//  
+    // src/arith_uint256.h
 
-#ifndef BITCOIN_ARITH_UINT256_H
-#define BITCOIN_ARITH_UINT256_H
+#ifndef QUBITCOIN_ARITH_UINT256_H
+#define QUBITCOIN_ARITH_UINT256_H
 
 #include <compare>
 #include <cstdint>
@@ -275,4 +275,4 @@ arith_uint256 UintToArith256(const uint256 &);
 
 extern template class base_uint<256>;
 
-#endif // BITCOIN_ARITH_UINT256_H
+#endif // QUBITCOIN_ARITH_UINT256_H

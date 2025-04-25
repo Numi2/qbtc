@@ -1,6 +1,4 @@
-//   2015-2022 
-//    
-//  
+// src/prevector.h
 
 #ifndef BITCOIN_PREVECTOR_H
 #define BITCOIN_PREVECTOR_H

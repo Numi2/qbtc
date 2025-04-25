@@ -1,9 +1,7 @@
-//   2016-2021 
-//    
-//  
+// src/util/rbf.h
 
-#ifndef BITCOIN_UTIL_RBF_H
-#define BITCOIN_UTIL_RBF_H
+#ifndef QUBITCOIN_UTIL_RBF_H
+#define QUBITCOIN_UTIL_RBF_H
 
 #include <cstdint>
 
@@ -20,4 +18,4 @@ static constexpr uint32_t MAX_BIP125_RBF_SEQUENCE{0xfffffffd};
 * party to be able to disable replacement by opting out in their own input. */
 bool SignalsOptInRBF(const CTransaction& tx);
 
-#endif // BITCOIN_UTIL_RBF_H
+#endif // QUBITCOIN_UTIL_RBF_H

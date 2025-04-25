@@ -1,9 +1,8 @@
-//   2016-2021 
-//    
-//  
 
-#ifndef BITCOIN_DEPLOYMENTINFO_H
-#define BITCOIN_DEPLOYMENTINFO_H
+// src/deploymentinfo.h
+
+#ifndef QUBITCOIN_DEPLOYMENTINFO_H
+#define QUBITCOIN_DEPLOYMENTINFO_H
 
 #include <consensus/params.h>
 
@@ -29,4 +28,4 @@ inline std::string DeploymentName(Consensus::DeploymentPos pos)
 
 std::optional<Consensus::BuriedDeployment> GetBuriedDeployment(const std::string_view deployment_name);
 
-#endif // BITCOIN_DEPLOYMENTINFO_H
+#endif // QUBITCOIN_DEPLOYMENTINFO_H

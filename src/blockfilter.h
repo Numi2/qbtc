@@ -1,9 +1,7 @@
-//   2018-2022 
-//    
-//  
+// src/blockfilter.h
 
-#ifndef BITCOIN_BLOCKFILTER_H
-#define BITCOIN_BLOCKFILTER_H
+#ifndef QUBITCOIN_BLOCKFILTER_H
+#define QUBITCOIN_BLOCKFILTER_H
 
 #include <cstddef>
 #include <cstdint>
@@ -172,4 +170,4 @@ public:
     }
 };
 
-#endif // BITCOIN_BLOCKFILTER_H
+#endif // QUBITCOIN_BLOCKFILTER_H

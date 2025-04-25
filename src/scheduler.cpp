@@ -1,6 +1,4 @@
-//   2015-2022 
-//    
-//  
+// src/scheduler.cpp    
 
 #include <scheduler.h>
 

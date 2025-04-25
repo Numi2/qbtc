@@ -1,52 +1,53 @@
- 
-//  
+// src/outputtype.h
 
-#ifndef BITCOIN_OUTPUTTYPE_H
-#define BITCOIN_OUTPUTTYPE_H
+#ifndef QUBITCOIN_OUTPUTTYPE_H
+#define QUBITCOIN_OUTPUTTYPE_H
 
 #include <addresstype.h>
 #include <script/signingprovider.h>
+#include <dilithium_pubkey.h>
 
 #include <array>
 #include <optional>
 #include <string>
 #include <vector>
 
+/** Supported address output types on QubitCoin (only native Bech32m). */
 enum class OutputType {
-    LEGACY,
-    P2SH_SEGWIT,
-    BECH32,
     BECH32M,
     UNKNOWN,
 };
 
-static constexpr auto OUTPUT_TYPES = std::array{
-    OutputType::LEGACY,
-    OutputType::P2SH_SEGWIT,
-    OutputType::BECH32,
+static constexpr auto OUTPUT_TYPES = std::array<OutputType, 1>{
     OutputType::BECH32M,
 };
 
+/** Parse an output‐type label ("bech32m") into an enum. */
 std::optional<OutputType> ParseOutputType(const std::string& str);
+
+/** Get the lowercase label for an OutputType. */
 const std::string& FormatOutputType(OutputType type);
 
 /**
- * Get a destination of the requested type (if possible) to the specified key.
- * The caller must make sure LearnRelatedScripts has been called beforehand.
+ * Produce a Bech32m destination ("qbc1p…") for the given Dilithium public key.
+ * Caller must have called LearnRelatedScripts beforehand if needed.
  */
-CTxDestination GetDestinationForKey(const CPubKey& key, OutputType);
+CTxDestination GetDestinationForKey(const CDilithiumPubKey& key, OutputType type);
 
-/** Get all destinations (potentially) supported by the wallet for the given key. */
-std::vector<CTxDestination> GetAllDestinationsForKey(const CPubKey& key);
+/**  
+ * Enumerate all destinations (here, just Bech32m) for a Dilithium key.  
+ */
+std::vector<CTxDestination> GetAllDestinationsForKey(const CDilithiumPubKey& key);
 
 /**
- * Get a destination of the requested type (if possible) to the specified script.
- * This function will automatically add the script (and any other
- * necessary scripts) to the keystore.
+ * Add the given script to the keystore and return its Bech32m destination.
  */
-CTxDestination AddAndGetDestinationForScript(FlatSigningProvider& keystore, const CScript& script, OutputType);
+CTxDestination AddAndGetDestinationForScript(
+    FlatSigningProvider& keystore,
+    const CScript& script,
+    OutputType type);
 
-/** Get the OutputType for a CTxDestination */
+/** Determine the OutputType (BECH32M or UNKNOWN) from a CTxDestination. */
 std::optional<OutputType> OutputTypeFromDestination(const CTxDestination& dest);
 
-#endif // BITCOIN_OUTPUTTYPE_H
+#endif // QUBITCOIN_OUTPUTTYPE_H

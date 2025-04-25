@@ -1,10 +1,7 @@
-// 
-//     20 
-//    
-//  
+// src/attributes.h
 
-#ifndef BITCOIN_ATTRIBUTES_H
-#define BITCOIN_ATTRIBUTES_H
+#ifndef QUBITCOIN_ATTRIBUTES_H
+#define QUBITCOIN_ATTRIBUTES_H
 
 #if defined(__clang__)
 #  if __has_attribute(lifetimebound)
@@ -24,4 +21,4 @@
 #  error No known always_inline attribute for this platform.
 #endif
 
-#endif // BITCOIN_ATTRIBUTES_H
+#endif // QUBITCOIN_ATTRIBUTES_H
