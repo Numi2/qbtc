@@ -1,9 +1,7 @@
-//  
-//    
-//  
+// src/util/signalinterrupt.h
 
-#ifndef BITCOIN_UTIL_SIGNALINTERRUPT_H
-#define BITCOIN_UTIL_SIGNALINTERRUPT_H
+#ifndef QUBITCOIN_UTIL_SIGNALINTERRUPT_H
+#define QUBITCOIN_UTIL_SIGNALINTERRUPT_H
 
 #ifdef WIN32
 #include <condition_variable>
@@ -49,4 +47,4 @@ private:
 };
 } // namespace util
 
-#endif // BITCOIN_UTIL_SIGNALINTERRUPT_H
+#endif // QUBITCOIN_UTIL_SIGNALINTERRUPT_H

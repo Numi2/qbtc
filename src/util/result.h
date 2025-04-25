@@ -1,9 +1,7 @@
-//   2022 
-//    
- 
+// src/util/result.h
 
-#ifndef BITCOIN_UTIL_RESULT_H
-#define BITCOIN_UTIL_RESULT_H
+#ifndef QUBITCOIN_UTIL_RESULT_H
+#define QUBITCOIN_UTIL_RESULT_H
 
 #include <attributes.h>
 #include <util/translation.h>
@@ -96,4 +94,4 @@ bilingual_str ErrorString(const Result<T>& result)
 }
 } // namespace util
 
-#endif // BITCOIN_UTIL_RESULT_H
+#endif // QUBITCOIN_UTIL_RESULT_H

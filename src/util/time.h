@@ -1,10 +1,8 @@
-// 
-//   2009-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_TIME_H
-#define BITCOIN_UTIL_TIME_H
+// src/util/time.h
+
+#ifndef QUBITCOIN_UTIL_TIME_H
+#define QUBITCOIN_UTIL_TIME_H
 
 #include <chrono> // IWYU pragma: export
 #include <cstdint>
@@ -145,4 +143,4 @@ struct timeval MillisToTimeval(int64_t nTimeout);
  */
 struct timeval MillisToTimeval(std::chrono::milliseconds ms);
 
-#endif // BITCOIN_UTIL_TIME_H
+#endif // QUBITCOIN_UTIL_TIME_H

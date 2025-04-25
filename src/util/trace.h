@@ -1,9 +1,7 @@
-//   2020-2021 
-//    
-//  
+// src/util/trace.h
 
-#ifndef BITCOIN_UTIL_TRACE_H
-#define BITCOIN_UTIL_TRACE_H
+#ifndef QUBITCOIN_UTIL_TRACE_H
+#define QUBITCOIN_UTIL_TRACE_H
 
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
@@ -51,4 +49,4 @@
 #endif // ENABLE_TRACING
 
 
-#endif // BITCOIN_UTIL_TRACE_H
+#endif // QUBITCOIN_UTIL_TRACE_H

@@ -1,9 +1,7 @@
-//   2010-2022 
-//    
-//  
+// src/util/syserror.h
 
-#ifndef BITCOIN_UTIL_SYSERROR_H
-#define BITCOIN_UTIL_SYSERROR_H
+#ifndef QUBITCOIN_UTIL_SYSERROR_H
+#define QUBITCOIN_UTIL_SYSERROR_H
 
 #include <string>
 
@@ -17,4 +15,4 @@ std::string SysErrorString(int err);
 std::string Win32ErrorString(int err);
 #endif
 
-#endif // BITCOIN_UTIL_SYSERROR_H
+#endif // QUBITCOIN_UTIL_SYSERROR_H

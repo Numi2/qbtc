@@ -1,9 +1,7 @@
-//   2019-2022 
-//    
-//  
+// src/util/macros.h
 
-#ifndef BITCOIN_UTIL_MACROS_H
-#define BITCOIN_UTIL_MACROS_H
+#ifndef QUBITCOIN_UTIL_MACROS_H
+#define QUBITCOIN_UTIL_MACROS_H
 
 #define PASTE(x, y) x ## y
 #define PASTE2(x, y) PASTE(x, y)
@@ -17,4 +15,4 @@
 #define STRINGIZE(X) DO_STRINGIZE(X)
 #define DO_STRINGIZE(X) #X
 
-#endif // BITCOIN_UTIL_MACROS_H
+#endif // QUBITCOIN_UTIL_MACROS_H

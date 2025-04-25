@@ -1,9 +1,8 @@
-//     
-//    
-//  
 
-#ifndef BITCOIN_UTIL_THREADINTERRUPT_H
-#define BITCOIN_UTIL_THREADINTERRUPT_H
+// src/util/threadinterrupt.h   
+
+#ifndef QUBITCOIN_UTIL_THREADINTERRUPT_H
+#define QUBITCOIN_UTIL_THREADINTERRUPT_H
 
 #include <sync.h>
 #include <threadsafety.h>
@@ -39,4 +38,4 @@ private:
     std::atomic<bool> flag;
 };
 
-#endif // BITCOIN_UTIL_THREADINTERRUPT_H
+#endif // QUBITCOIN_UTIL_THREADINTERRUPT_H

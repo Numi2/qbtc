@@ -1,9 +1,7 @@
-//  
-//    
-//  
+// src/util/insert.h
 
-#ifndef BITCOIN_UTIL_INSERT_H
-#define BITCOIN_UTIL_INSERT_H
+#ifndef QUBITCOIN_UTIL_INSERT_H
+#define QUBITCOIN_UTIL_INSERT_H
 
 #include <set>
 
@@ -21,4 +19,4 @@ inline void insert(std::set<TsetT>& dst, const Tsrc& src) {
 
 } // namespace util
 
-#endif // BITCOIN_UTIL_INSERT_H
+#endif // QUBITCOIN_UTIL_INSERT_H

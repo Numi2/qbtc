@@ -1,10 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/wallet/bdb.h
 
-#ifndef BITCOIN_WALLET_BDB_H
-#define BITCOIN_WALLET_BDB_H
+#ifndef QUBITCOIN_WALLET_BDB_H
+#define QUBITCOIN_WALLET_BDB_H
 
 #include <clientversion.h>
 #include <common/system.h>
@@ -222,4 +219,4 @@ bool BerkeleyDatabaseSanityCheck();
 std::unique_ptr<BerkeleyDatabase> MakeBerkeleyDatabase(const fs::path& path, const DatabaseOptions& options, DatabaseStatus& status, bilingual_str& error);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_BDB_H
+#endif // QUBITCOIN_WALLET_BDB_H

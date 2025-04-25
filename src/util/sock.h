@@ -1,9 +1,8 @@
-//   2020-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_SOCK_H
-#define BITCOIN_UTIL_SOCK_H
+// src/util/sock.h
+
+#ifndef QUBITCOIN_UTIL_SOCK_H
+#define QUBITCOIN_UTIL_SOCK_H
 
 #include <compat/compat.h>
 #include <util/threadinterrupt.h>
@@ -284,4 +283,4 @@ private:
 /** Return readable error string for a network error code */
 std::string NetworkErrorString(int err);
 
-#endif // BITCOIN_UTIL_SOCK_H
+#endif // QUBITCOIN_UTIL_SOCK_H

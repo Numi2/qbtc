@@ -1,9 +1,7 @@
-//   2017-2022 
-//    
-//  
+// src/wallet/coinselection.h
 
-#ifndef BITCOIN_WALLET_COINSELECTION_H
-#define BITCOIN_WALLET_COINSELECTION_H
+#ifndef QUBITCOIN_WALLET_COINSELECTION_H
+#define QUBITCOIN_WALLET_COINSELECTION_H
 
 #include <consensus/amount.h>
 #include <consensus/consensus.h>
@@ -465,4 +463,4 @@ util::Result<SelectionResult> KnapsackSolver(std::vector<OutputGroup>& groups, c
                                              CAmount change_target, FastRandomContext& rng, int max_selection_weight);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_COINSELECTION_H
+#endif // QUBITCOIN_WALLET_COINSELECTION_H

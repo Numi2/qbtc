@@ -1,9 +1,7 @@
-//     21 
-//    
-//  
+// src/wallet/crypter.h
 
-#ifndef BITCOIN_WALLET_CRYPTER_H
-#define BITCOIN_WALLET_CRYPTER_H
+#ifndef QUBITCOIN_WALLET_CRYPTER_H
+#define QUBITCOIN_WALLET_CRYPTER_H
 
 #include <serialize.h>
 #include <support/allocators/secure.h>
@@ -108,4 +106,4 @@ bool DecryptSecret(const CKeyingMaterial& master_key, std::span<const unsigned c
 bool DecryptKey(const CKeyingMaterial& master_key, std::span<const unsigned char> crypted_secret, const CPubKey& pub_key, CKey& key);
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_CRYPTER_H
+#endif // QUBITCOIN_WALLET_CRYPTER_H

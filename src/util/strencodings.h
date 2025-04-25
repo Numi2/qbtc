@@ -1,13 +1,7 @@
-// 
-//   2009-present 
-//    
-//  
+// src/util/strencodings.h
 
-/**
- * Utilities for converting data from/to strings.
- */
-#ifndef BITCOIN_UTIL_STRENCODINGS_H
-#define BITCOIN_UTIL_STRENCODINGS_H
+#ifndef QUBITCOIN_UTIL_STRENCODINGS_H
+#define QUBITCOIN_UTIL_STRENCODINGS_H
 
 #include <crypto/hex_base.h> // IWYU pragma: export
 #include <span.h>
@@ -441,4 +435,4 @@ inline auto operator""_hex_v_u8() { return std::vector<uint8_t>{UCharCast(str.by
 } // inline namespace hex_literals
 } // namespace util
 
-#endif // BITCOIN_UTIL_STRENCODINGS_H
+#endif // QUBITCOIN_UTIL_STRENCODINGS_H

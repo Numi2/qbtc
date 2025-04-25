@@ -1,9 +1,7 @@
-//   2019-present 
-//    
-//  
+// src/util/string.h
 
-#ifndef BITCOIN_UTIL_STRING_H
-#define BITCOIN_UTIL_STRING_H
+#ifndef QUBITCOIN_UTIL_STRING_H
+#define QUBITCOIN_UTIL_STRING_H
 
 #include <span.h>
 
@@ -250,4 +248,4 @@ template <typename T1, size_t PREFIX_LEN>
 }
 } // namespace util
 
-#endif // BITCOIN_UTIL_STRING_H
+#endif // QUBITCOIN_UTIL_STRING_H

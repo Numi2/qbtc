@@ -1,9 +1,8 @@
-//   2019-2022 
-//    
-//  
+ 
+// src/util/vector.h
 
-#ifndef BITCOIN_UTIL_VECTOR_H
-#define BITCOIN_UTIL_VECTOR_H
+#ifndef QUBITCOIN_UTIL_VECTOR_H
+#define QUBITCOIN_UTIL_VECTOR_H
 
 #include <functional>
 #include <initializer_list>
@@ -80,4 +79,4 @@ inline std::optional<V> FindFirst(const std::vector<V>& vec, const L fnc)
     return std::nullopt;
 }
 
-#endif // BITCOIN_UTIL_VECTOR_H
+#endif // QUBITCOIN_UTIL_VECTOR_H

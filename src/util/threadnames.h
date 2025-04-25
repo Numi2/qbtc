@@ -1,9 +1,7 @@
-//   2018-2019 
-//    
-//  
+// src/util/threadnames.h
 
-#ifndef BITCOIN_UTIL_THREADNAMES_H
-#define BITCOIN_UTIL_THREADNAMES_H
+#ifndef QUBITCOIN_UTIL_THREADNAMES_H
+#define QUBITCOIN_UTIL_THREADNAMES_H
 
 #include <string>
 
@@ -23,4 +21,4 @@ std::string ThreadGetInternalName();
 
 } // namespace util
 
-#endif // BITCOIN_UTIL_THREADNAMES_H
+#endif // QUBITCOIN_UTIL_THREADNAMES_H

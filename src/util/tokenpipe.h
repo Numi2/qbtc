@@ -1,9 +1,7 @@
-//   2021 
-//    
-//  
+// src/util/tokenpipe.h
 
-#ifndef BITCOIN_UTIL_TOKENPIPE_H
-#define BITCOIN_UTIL_TOKENPIPE_H
+#ifndef QUBITCOIN_UTIL_TOKENPIPE_H
+#define QUBITCOIN_UTIL_TOKENPIPE_H
 
 #ifndef WIN32
 
@@ -124,4 +122,4 @@ public:
 
 #endif // WIN32
 
-#endif // BITCOIN_UTIL_TOKENPIPE_H
+#endif // QUBITCOIN_UTIL_TOKENPIPE_H

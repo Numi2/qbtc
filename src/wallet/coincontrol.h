@@ -1,9 +1,7 @@
-//   2011-2022 
-//    
-//  
+// src/wallet/coincontrol.h
 
-#ifndef BITCOIN_WALLET_COINCONTROL_H
-#define BITCOIN_WALLET_COINCONTROL_H
+#ifndef QUBITCOIN_WALLET_COINCONTROL_H
+#define QUBITCOIN_WALLET_COINCONTROL_H
 
 #include <outputtype.h>
 #include <policy/feerate.h>
@@ -187,4 +185,4 @@ private:
 };
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_COINCONTROL_H
+#endif // QUBITCOIN_WALLET_COINCONTROL_H

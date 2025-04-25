@@ -1,9 +1,8 @@
-//   2020-2021 
-//    
-//  
 
-#ifndef BITCOIN_WALLET_CONTEXT_H
-#define BITCOIN_WALLET_CONTEXT_H
+// src/wallet/context.h
+
+#ifndef QUBITCOIN_WALLET_CONTEXT_H
+#define QUBITCOIN_WALLET_CONTEXT_H
 
 #include <sync.h>
 
@@ -51,4 +50,4 @@ struct WalletContext {
 };
 } // namespace wallet
 
-#endif // BITCOIN_WALLET_CONTEXT_H
+#endif // QUBITCOIN_WALLET_CONTEXT_H

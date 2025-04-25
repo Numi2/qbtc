@@ -1,9 +1,8 @@
-//   2015-2021 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_READWRITEFILE_H
-#define BITCOIN_UTIL_READWRITEFILE_H
+// src/util/readwritefile.h
+
+#ifndef QUBITCOIN_UTIL_READWRITEFILE_H
+#define QUBITCOIN_UTIL_READWRITEFILE_H
 
 #include <util/fs.h>
 
@@ -25,4 +24,4 @@ std::pair<bool,std::string> ReadBinaryFile(const fs::path &filename, size_t maxs
  */
 bool WriteBinaryFile(const fs::path &filename, const std::string &data);
 
-#endif // BITCOIN_UTIL_READWRITEFILE_H
+#endif // QUBITCOIN_UTIL_READWRITEFILE_H

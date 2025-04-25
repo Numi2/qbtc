@@ -1,9 +1,7 @@
-//   
-//    
-//  
+// src/util/vecdeque.h
 
-#ifndef BITCOIN_UTIL_VECDEQUE_H
-#define BITCOIN_UTIL_VECDEQUE_H
+#ifndef QUBITCOIN_UTIL_VECDEQUE_H
+#define QUBITCOIN_UTIL_VECDEQUE_H
 
 #include <util/check.h>
 
@@ -314,4 +312,4 @@ public:
     size_t capacity() const noexcept { return m_capacity; }
 };
 
-#endif // BITCOIN_UTIL_VECDEQUE_H
+#endif // QUBITCOIN_UTIL_VECDEQUE_H

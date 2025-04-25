@@ -1,9 +1,7 @@
-//   2012-2020 
-//    
-//  
+// src/util/ui_change_type.h
 
-#ifndef BITCOIN_UTIL_UI_CHANGE_TYPE_H
-#define BITCOIN_UTIL_UI_CHANGE_TYPE_H
+#ifndef QUBITCOIN_UTIL_UI_CHANGE_TYPE_H
+#define QUBITCOIN_UTIL_UI_CHANGE_TYPE_H
 
 /** General change type (added, updated, removed). */
 enum ChangeType {
@@ -12,4 +10,4 @@ enum ChangeType {
     CT_DELETED
 };
 
-#endif // BITCOIN_UTIL_UI_CHANGE_TYPE_H
+#endif // QUBITCOIN_UTIL_UI_CHANGE_TYPE_H

@@ -1,9 +1,8 @@
-//   2019-present 
-//    
-//  
 
-#ifndef BITCOIN_UTIL_TRANSLATION_H
-#define BITCOIN_UTIL_TRANSLATION_H
+// src/util/translation.h
+
+#ifndef QUBITCOIN_UTIL_TRANSLATION_H
+#define QUBITCOIN_UTIL_TRANSLATION_H
 
 #include <tinyformat.h>
 #include <util/string.h>
@@ -107,4 +106,4 @@ bilingual_str format(util::BilingualFmt<sizeof...(Args)> fmt, const Args&... arg
 }
 } // namespace tinyformat
 
-#endif // BITCOIN_UTIL_TRANSLATION_H
+#endif // QUBITCOIN_UTIL_TRANSLATION_H
