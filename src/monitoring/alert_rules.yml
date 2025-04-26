@@ -1,0 +1,122 @@
+groups:
+  - name: qubitcoin-alerts
+    rules:
+    
+    # Node state alerts
+    - alert: QubitcoinNodeDown
+      expr: up{job="qubitcoin"} == 0
+      for: 5m
+      labels:
+        severity: critical
+      annotations:
+        summary: "QuBitcoin node down"
+        description: "QuBitcoin node has been down for more than 5 minutes."
+
+    - alert: QubitcoinHighCPUUsage
+      expr: rate(process_cpu_seconds_total{job="qubitcoin"}[5m]) > 0.8
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High CPU usage"
+        description: "QuBitcoin node is using more than 80% CPU for over 10 minutes."
+
+    - alert: QubitcoinHighMemoryUsage
+      expr: process_resident_memory_bytes{job="qubitcoin"} / node_memory_MemTotal_bytes > 0.8
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High memory usage"
+        description: "QuBitcoin node is using more than 80% of available memory for over 10 minutes."
+
+    # Blockchain state alerts
+    - alert: QubitcoinNoNewBlocks
+      expr: (time() - qubitcoin_blockchain_last_block_time) > 3600
+      for: 5m
+      labels:
+        severity: warning
+      annotations:
+        summary: "No new blocks"
+        description: "No new blocks have been received in the last hour."
+
+    - alert: QubitcoinChainSplit
+      expr: increase(qubitcoin_blockchain_forks_total[1h]) > 0
+      labels:
+        severity: warning
+      annotations:
+        summary: "Blockchain fork detected"
+        description: "A fork has been detected in the blockchain."
+
+    - alert: QubitcoinLowPeers
+      expr: qubitcoin_p2p_connected_peers < 8
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Low peer count"
+        description: "QuBitcoin node has fewer than 8 peers connected for over 15 minutes."
+
+    - alert: QubitcoinVerificationProgress
+      expr: qubitcoin_blockchain_verification_progress < 0.999
+      for: 1h
+      labels:
+        severity: warning
+      annotations:
+        summary: "Initial block download incomplete"
+        description: "Node is still in initial block download after 1 hour."
+
+    # Mempool alerts
+    - alert: QubitcoinMempoolAlmostFull
+      expr: qubitcoin_mempool_bytes / qubitcoin_mempool_max_bytes > 0.8
+      for: 10m
+      labels:
+        severity: warning
+      annotations:
+        summary: "Mempool almost full"
+        description: "Mempool is more than 80% full for over 10 minutes."
+
+    - alert: QubitcoinMempoolMinFeeHigh
+      expr: qubitcoin_mempool_min_fee_satoshis_per_kb > 5000
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High mempool minimum fee"
+        description: "Mempool minimum fee is above 5000 sat/KB for over 15 minutes."
+
+    # Network alerts
+    - alert: QubitcoinNetworkOutbound
+      expr: rate(qubitcoin_p2p_bytes_sent_total[5m]) > 5000000
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High outbound network traffic"
+        description: "Node is sending more than 5MB/s for over 15 minutes."
+
+    - alert: QubitcoinNetworkInbound
+      expr: rate(qubitcoin_p2p_bytes_received_total[5m]) > 5000000
+      for: 15m
+      labels:
+        severity: warning
+      annotations:
+        summary: "High inbound network traffic"
+        description: "Node is receiving more than 5MB/s for over 15 minutes."
+
+    # Performance alerts
+    - alert: QubitcoinBlockVerificationSlow
+      expr: qubitcoin_blockchain_block_verification_seconds > 10
+      labels:
+        severity: warning
+      annotations:
+        summary: "Slow block verification"
+        description: "Block verification is taking more than 10 seconds."
+
+    - alert: QubitcoinPostQuantumOperationsSlow
+      expr: qubitcoin_pq_operation_seconds > 0.1
+      labels:
+        severity: warning
+      annotations:
+        summary: "Slow post-quantum cryptographic operations"
+        description: "Post-quantum cryptographic operations are taking more than 100ms." 

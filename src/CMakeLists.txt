@@ -52,6 +52,8 @@ target_link_libraries(bitcoin_clientversion
 add_dependencies(bitcoin_clientversion generate_build_info)
 
 add_subdirectory(crypto)
+add_subdirectory(monitoring)
+add_subdirectory(net)
 add_subdirectory(util)
 if(ENABLE_IPC)
   add_subdirectory(ipc)

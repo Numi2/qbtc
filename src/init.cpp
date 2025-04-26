@@ -1,6 +1,3 @@
- 
-//  
-
 #include <bitcoin-build-config.h> // IWYU pragma: keep
 
 #include <init.h>
@@ -90,6 +87,7 @@
 #include <validationinterface.h>
 #include <walletinitinterface.h>
 #include <crypto/pqc_keys.h>
+#include <monitoring/collectors.h>
 
 #include <algorithm>
 #include <condition_variable>
@@ -398,6 +396,9 @@ void Shutdown(NodeContext& node)
     RemovePidFile(*node.args);
 
     LogPrintf("%s: done\n", __func__);
+    
+    // Stop metrics collectors
+    qubitcoin::monitoring::MetricsCollectorManager::Instance().Shutdown();
 }
 
 /**
@@ -2091,6 +2092,18 @@ bool AppInitMain(NodeContext& node, interfaces::BlockAndHeaderTipInfo* tip_info)
 #if HAVE_SYSTEM
     StartupNotify(args);
 #endif
+
+    // Initialize metrics collectors if enabled
+    if (gArgs.GetBoolArg("-metrics", false)) {
+        LogPrintf("Initializing Prometheus metrics exporters...\n");
+        if (!qubitcoin::monitoring::MetricsCollectorManager::Instance().Initialize(
+                node.chainman.get(), 
+                node.mempool.get(),
+                node.connman.get())) {
+            LogPrintf("Failed to initialize metrics collectors\n");
+            return false;
+        }
+    }
 
     return true;
 }

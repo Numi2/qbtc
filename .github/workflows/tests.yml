@@ -1,0 +1,50 @@
+name: Run Unit Tests
+
+on:
+  push:
+    branches: [ main, master, dev ]
+  pull_request:
+    branches: [ main, master, dev ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential libtool autotools-dev automake pkg-config bsdmainutils python3
+          sudo apt-get install -y libssl-dev libevent-dev libboost-system-dev libboost-filesystem-dev libboost-chrono-dev
+          sudo apt-get install -y libboost-test-dev libboost-thread-dev libsqlite3-dev libminiupnpc-dev
+          sudo apt-get install -y libzmq3-dev libqrencode-dev
+
+      - name: Configure
+        run: |
+          ./autogen.sh
+          ./configure --enable-debug --without-gui --with-incompatible-bdb --disable-wallet
+
+      - name: Build
+        run: make -j$(nproc)
+
+      - name: Run unit tests
+        run: |
+          export BOOST_TEST_LOG_LEVEL=all
+          make check-unit
+          
+      - name: Run functional tests
+        run: |
+          python3 test/functional/test_runner.py --extended
+
+      - name: Export test logs on failure
+        if: failure()
+        uses: actions/upload-artifact@v3
+        with:
+          name: test-logs
+          path: |
+            test/tmp/**/*.log
+            test_log.txt
+            src/test-suite.log 

@@ -1,0 +1,107 @@
+name: Static Analysis
+
+on:
+  push:
+    branches: [ main, master, develop ]
+  pull_request:
+    branches: [ main, master, develop ]
+  workflow_dispatch:
+
+jobs:
+  clang-analyzer:
+    name: Clang Static Analyzer
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake clang-tools-14 clang-tidy-14 llvm-14
+          
+      - name: Configure CMake with Clang analyzer
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          
+      - name: Run Clang Static Analyzer
+        run: |
+          cd build
+          scan-build-14 --status-bugs -o analyzer_reports make -j$(nproc)
+          
+      - name: Archive analysis reports
+        uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          name: clang-analyzer-reports
+          path: build/analyzer_reports
+          
+  clang-tidy:
+    name: Clang-Tidy
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential cmake clang-tools-14 clang-tidy-14
+          
+      - name: Configure CMake
+        run: |
+          mkdir build && cd build
+          cmake .. -DCMAKE_C_COMPILER=clang-14 -DCMAKE_CXX_COMPILER=clang++-14 -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+          
+      - name: Run Clang-Tidy
+        run: |
+          cd build
+          python3 ../contrib/devtools/run-clang-tidy.py -clang-tidy-binary=clang-tidy-14 -p . -checks='-*,clang-analyzer-*,performance-*,readability-*,portability-*' -quiet
+          
+  cppcheck:
+    name: Cppcheck
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Cppcheck
+        run: sudo apt-get update && sudo apt-get install -y cppcheck
+        
+      - name: Run Cppcheck
+        run: |
+          cppcheck --enable=all --std=c++17 --error-exitcode=1 --suppress=missingIncludeSystem \
+            --suppress=unmatchedSuppression --suppress=unusedFunction \
+            --suppress=preprocessorErrorDirective \
+            -i src/crypto/ctaes/ -i src/leveldb/ -i src/secp256k1/ \
+            --force ./src/
+          
+  flawfinder:
+    name: Flawfinder
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Flawfinder
+        run: sudo pip install flawfinder
+        
+      - name: Run Flawfinder
+        run: |
+          flawfinder --minlevel=3 --error-level=4 ./src/
+        
+  cargo-audit:
+    name: Cargo Audit (Rust dependencies)
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v3
+      
+      - name: Install Rust toolchain
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: stable
+          profile: minimal
+          
+      - name: Install cargo-audit
+        run: cargo install cargo-audit
+        
+      - name: Run Cargo Audit
+        run: |
+          find . -name "Cargo.lock" -exec dirname {} \; | xargs -I{} bash -c "cd '{}' && cargo audit" 

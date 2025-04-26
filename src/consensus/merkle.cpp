@@ -141,17 +141,17 @@ static void MerkleComputation(const std::vector<uint256>& leaves, uint256* proot
     // odd levels, and reduce everything to a single top value.
     // Level is the level (counted from the bottom) up to which we've sweeped.
     int level = 0;
-    // As long as bit number level in count is zero, skip it. It means there
-    // is nothing left at this level.
-    while (!(count & ((uint32_t{1}) << level))) {
-        level++;
-    }
-    uint256 h = inner[level];
-    bool matchh = matchlevel == level;
-    while (count != ((uint32_t{1}) << level)) {
+        // As long as bit number level in count is zero, skip it. It means there
+        // is nothing left at this level.
+        while (!(count & ((uint32_t{1}) << level))) {
+            level++;
+        }
+        uint256 h = inner[level];
+        bool matchh = matchlevel == level;
+        while (count != ((uint32_t{1}) << level)) {
         // If we reach this point, h is an inner value that is not the top.
-        // We combine it with itself (Bitcoin's special rule for odd levels in
-        // the tree) to produce a higher level one.
+        // We combine it with itself (special rule for odd levels in
+        // the QuBitcoin tree) to produce a higher level one.
         if (path && matchh) {
             path->push_back(h);
         }

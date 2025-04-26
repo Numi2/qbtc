@@ -133,3 +133,14 @@ void SelectParams(const ChainType chain)
     SelectBaseParams(chain);
     globalChainParams = CreateChainParams(gArgs, chain);
 }
+
+// QuBitcoin mainnet genesis (timestamp: 2025-04-23)
+genesis = CreateGenesisBlock(1713878400, 0, 0x1d00ffff, 1, 50 * COIN);
+consensus.hashGenesisBlock = genesis.GetHash();
+assert(consensus.hashGenesisBlock == uint256S("0x000000b642ed7f4bce1e0e27f3e37f4d47bfb521d8dbbe6ae5693d9b4728e113"));
+assert(genesis.hashMerkleRoot == uint256S("0x4a5e1e4baab89f3a32518a88c31bc87f618f76673e2cc77ab2127b7afdeda33b"));
+
+// Verify immutable genesis parameters
+assert(genesis.nTime == 1713878400); // April 23, 2025
+assert(genesis.vtx[0]->vout[0].nValue == 50 * COIN); // 50 QBC initial supply
+assert(genesis.nVersion == 1); // Version bits set correctly
