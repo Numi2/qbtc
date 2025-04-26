@@ -857,6 +857,7 @@ RPCHelpMan simulaterawtransaction()
     };
 }
 
+#if 0 // disable migratewallet RPC: legacy wallet migration unsupported
 static RPCHelpMan migratewallet()
 {
     return RPCHelpMan{"migratewallet",
@@ -924,6 +925,7 @@ static RPCHelpMan migratewallet()
         },
     };
 }
+#endif // disable migratewallet RPC
 
 RPCHelpMan gethdkeys()
 {

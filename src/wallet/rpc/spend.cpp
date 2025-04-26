@@ -1036,7 +1036,7 @@ static RPCHelpMan bumpfee_helper(std::string method_name)
                     {"original_change_index", RPCArg::Type::NUM, RPCArg::DefaultHint{"not set, detect change automatically"}, "The 0-based index of the change output on the original transaction. "
                                                                                                                             "The indicated output will be recycled into the new change output on the bumped transaction. "
                                                                                                                             "The remainder after paying the recipients and fees will be sent to the output script of the "
-                                                                                                                            "original change output. The change output’s amount can increase if bumping the transaction "
+                                                                                                                            "original change output. The change output's amount can increase if bumping the transaction "
                                                                                                                             "adds new inputs, otherwise it will decrease. Cannot be used in combination with the 'outputs' option."},
                 },
                 RPCArgOptions{.oneline_description="options"}},
@@ -1385,7 +1385,7 @@ RPCHelpMan sendall()
                 }
         },
         RPCExamples{""
-        "\nSpend all UTXOs from the wallet with a fee rate of 1 " + CURRENCY_ATOM + "/vB using named arguments\n"
+        "\nSpend all UTXOs from the wallet with a fee rate of 1 " + CURRENCY_ATOM + "/vB using named arguments\n"
         + HelpExampleCli("-named sendall", "recipients='[\"" + EXAMPLE_ADDRESS[0] + "\"]' fee_rate=1\n") +
         "Spend all UTXOs with a fee rate of 1.1 " + CURRENCY_ATOM + "/vB using positional arguments\n"
         + HelpExampleCli("sendall", "'[\"" + EXAMPLE_ADDRESS[0] + "\"]' null \"unset\" 1.1\n") +

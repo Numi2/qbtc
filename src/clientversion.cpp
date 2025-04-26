@@ -20,7 +20,8 @@ using util::Join;
  * for both bitcoind and bitcoin-qt, to make it harder for attackers to
  * target servers or GUI users specifically.
  */
-const std::string UA_NAME("Satoshi");
+// User-agent name for both daemon and GUI, updated for QuBitcoin branding
+const std::string UA_NAME("QuBitcoin");
 
 
 #include <bitcoin-build-info.h>

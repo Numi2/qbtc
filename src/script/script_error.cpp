@@ -23,6 +23,8 @@ std::string ScriptErrorString(const ScriptError serror)
             return "Script failed an OP_CHECKMULTISIGVERIFY operation";
         case SCRIPT_ERR_CHECKSIGVERIFY:
             return "Script failed an OP_CHECKSIGVERIFY operation";
+        case SCRIPT_ERR_CHECKDILITHIUMVERIFY:
+            return "Script failed an OP_CHECKDILITHIUMVERIFY operation";
         case SCRIPT_ERR_NUMEQUALVERIFY:
             return "Script failed an OP_NUMEQUALVERIFY operation";
         case SCRIPT_ERR_SCRIPT_SIZE:

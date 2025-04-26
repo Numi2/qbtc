@@ -1,4 +1,14 @@
 // src/crypto/pqc.h
+#ifndef QUBITCOIN_CRYPTO_PQC_H
+#define QUBITCOIN_CRYPTO_PQC_H
+
+#include <openssl/evp.h>
+#include <cstddef>
+#include <cstdint>
+#include <memory>
+#include <vector>
+#include <stdexcept>
+#include <gsl/span>
 class CDilithiumKey {
     std::unique_ptr<EVP_PKEY,decltype(&EVP_PKEY_free)> p{nullptr,EVP_PKEY_free};
 public:
@@ -54,3 +64,5 @@ public:
 private:
     explicit CDilithiumKey(EVP_PKEY* k):p(k,EVP_PKEY_free){}
 };
+
+#endif // QUBITCOIN_CRYPTO_PQC_H

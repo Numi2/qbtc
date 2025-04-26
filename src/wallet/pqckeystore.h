@@ -48,6 +48,13 @@ public:
                      std::string_view message,
                      std::vector<uint8_t>& signature) const noexcept;
 
+    /** Sign a transaction input with Dilithium key, using BLAKE3-tagged sighash. */
+    bool SignTransaction(const CTransaction& txTo, 
+                        std::vector<unsigned char>& signature,
+                        int nIn,
+                        const CAmount& amount,
+                        const CScript& scriptPubKey) const;
+
 private:
     CWallet* wallet_;                           // owning wallet
     uint32_t  next_index_;                      // next HD derivation index

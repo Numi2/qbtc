@@ -1,4 +1,3 @@
-
 // src/wallet/wallet.h
 
 #ifndef QUBITCOIN_WALLET_WALLET_H
@@ -91,6 +90,22 @@ public:
     /** Expose DB for batch writes. */
     WalletDatabase& GetDB();
 
+    // Set the model used for spending PQC coins
+    void SetSpendingPQCModel(bool spend_pqc) { m_spend_pqc = spend_pqc; }
+    
+    // Get the model used for spending P2WPQC outputs
+    bool GetSpendingPQCModel() const { return m_spend_pqc; }
+    
+    // Access the PQC keystore
+    const PQCKeyStore& GetPQCKeyStore() const { return *m_pqc_keystore; }
+    PQCKeyStore& GetPQCKeyStore() { return *m_pqc_keystore; }
+    
+    /** Sign a P2WPQC (witness version 2) transaction input with Dilithium */
+    bool SignP2WPQCTransaction(CMutableTransaction& tx, const std::map<COutPoint, Coin>& coins, int nIn, const CScript& scriptPubKey, CAmount amount) const;
+    
+    /** Get the public key for a P2WPQC address */
+    bool GetPubKeyForP2WPQC(const CScript& scriptPubKey, std::vector<unsigned char>& pubkey) const;
+
 private:
     explicit CWallet(WalletContext& ctx, std::string name, ChainPtr chain);
 
@@ -111,6 +126,10 @@ private:
     mutable std::atomic<bool>      m_rescanning{false};
 
     mutable RecursiveMutex         cs_wallet;
+
+    // PQC model
+    bool                           m_spend_pqc{false};
+    std::unique_ptr<PQCKeyStore>   m_pqc_keystore;
 
     /** Load existing seed & next index from DB. */
     void LoadPqcState();

@@ -1,4 +1,3 @@
- //
 #include <algorithm>
 #include <common/args.h>
 #include <common/messages.h>
@@ -39,6 +38,11 @@ TRACEPOINT_SEMAPHORE(coin_selection, aps_create_tx_internal);
 
 namespace wallet {
 static constexpr size_t OUTPUT_GROUP_MAX_ENTRIES{100};
+
+static const size_t OUTPUT_SCRIPT_P2PKH_SIZE = 25;
+static const size_t OUTPUT_SCRIPT_P2SH_SIZE = 23;
+static const size_t OUTPUT_SCRIPT_P2WPKH_SIZE = 22;
+static const size_t OUTPUT_SCRIPT_P2WSH_SIZE = 34;
 
 /** Whether the descriptor represents, directly or not, a witness program. */
 static bool IsSegwit(const Descriptor& desc) {

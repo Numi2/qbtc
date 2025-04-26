@@ -62,7 +62,20 @@ This document outlines the steps to launch and maintain a thriving Qubitcoin net
 3. In `kernel/chainparams.cpp`, confirm seed list matches your DNS names.
 4. Monitor seed resolution and connectivity across the network.
 
-### 5. Release & Versioning
+### 5. Address Encoding & HD Wallets
+
+#### 5.1 Address Encoding
+* **Bech32m [6]** is used for efficiency and error detection.
+* **Witness Version:** Version 1 (`0x01`) signals a modern script format designed for post-quantum security.
+* **Payload:** `BLAKE3-256(DilithiumPublicKey)` constitutes the witness program – a commitment to ownership secured by lattice cryptography.
+* **Identifier:** Addresses starting with `qbc1p...` uniquely identify QuBitcoin destinations.
+
+#### 5.2 HD Wallets and Descriptors
+* **Derivation:** As standard BIP32 relies on ECDSA, a new Dilithium-compatible HD derivation scheme (e.g., PRF-based, using BLAKE3) is required for secure key management.
+* **Descriptors:** Output script descriptors must explicitly support the new key types (Dilithium) and derivation paths, enabling robust wallet interoperability.
+* **Wallet Management:** Wallet software must be built to handle Dilithium key generation, secure storage (encryption), and transaction signing using the new primitives and address formats specified by QuBitcoin.
+
+### 6. Release & Versioning
 1. Bump `CLIENT_VERSION_MAJOR`/`MINOR`/`BUILD` in `clientversion.h` to **1.0.0-qb**.
 2. Tag the Git repository:
    ```bash
@@ -72,7 +85,7 @@ This document outlines the steps to launch and maintain a thriving Qubitcoin net
 3. Build release artifacts (Linux tarball, Windows MSI, Homebrew/Cargo formulas).
 4. Publish checksums (SHA256) and BLAKE3 manifests for all binaries.
 
-### 6. Community & Node Onboarding
+### 7. Community & Node Onboarding
 1. Publish an **Upgrade Guide**:
    - Explain new ports (8334), magic, HRPs.
    - Dump then import old wallet seeds (via `dumpwallet` → `importwallet`).
@@ -86,12 +99,12 @@ This document outlines the steps to launch and maintain a thriving Qubitcoin net
    ```
 3. Share monitoring dashboards (Prometheus, Grafana) and alert rules.
 
-### 7. Monitoring & Maintenance
+### 8. Monitoring & Maintenance
 - Enable `-blocknotify` and `-walletnotify` hooks for external indexing services.
 - Collect metrics via RPC (`getnetworkinfo`, `getpeerinfo`, `getmempoolinfo`).
 - Regularly prune old block files if disk space is tight (`-prune=<n>`).
 
-### 8. Security & Best Practices
+### 9. Security & Best Practices
 - Always run over TLS for RPC communications (`rpcssl=1`).
 - Use hardware wallets with PSBT workflows for large funds.
 - Rotate RPC credentials and rotate seed node keys periodically.

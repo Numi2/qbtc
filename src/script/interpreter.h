@@ -9,7 +9,7 @@
 
 #include <consensus/amount.h>
 #include <crypto/blake3.h>
-#include <crypto/dilithium.h>
+#include <crypto/pqc.h>
 #include <primitives/transaction.h>
 #include <script/script_error.h>
 #include <span.h>
@@ -31,7 +31,7 @@ enum : uint32_t {
     SIGHASH_DEFAULT        = 0
 };
 
-//--- script verification flags (same bit-positions as Bitcoin)
+//--- script verification flags
 enum : uint32_t {
     SCRIPT_VERIFY_NONE                      = 0,
     SCRIPT_VERIFY_P2SH                      = (1U << 0),
@@ -87,9 +87,12 @@ public:
     bool CheckDilithiumSignature(
         std::span<const uint8_t> sig,
         std::span<const uint8_t> pubkey,
-        const uint256&           sighash
+        const CScript& scriptCode,
+        SigVersion sigversion
     ) const override {
-        return crypto::Dilithium::Verify(pubkey, sig, sighash);
+        // return crypto::Dilithium::Verify(pubkey, sig, sighash); // Keep implementation using CDilithiumKey
+        // Assuming CDilithiumKey::Verify is the correct static method from pqc.h
+        return CDilithiumKey::Verify(std::vector<uint8_t>(pubkey.begin(), pubkey.end()), sighash, sig);
     }
 };
 

@@ -21,7 +21,7 @@ namespace wallet {
 RPCHelpMan getnewaddress()
 {
     return RPCHelpMan{"getnewaddress",
-                "\nReturns a new Bitcoin address for receiving payments.\n"
+                "\nReturns a new QuBitcoin address for receiving payments.\n"
                 "If 'label' is specified, it is added to the address book \n"
                 "so payments received with the address will be associated with 'label'.\n",
                 {
@@ -29,7 +29,7 @@ RPCHelpMan getnewaddress()
                     {"address_type", RPCArg::Type::STR, RPCArg::DefaultHint{"set by -addresstype"}, "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."},
                 },
                 RPCResult{
-                    RPCResult::Type::STR, "address", "The new bitcoin address"
+                RPCResult::Type::STR, "address", "The new QuBitcoin address"
                 },
                 RPCExamples{
                     HelpExampleCli("getnewaddress", "")
@@ -73,7 +73,7 @@ RPCHelpMan getnewaddress()
 RPCHelpMan getrawchangeaddress()
 {
     return RPCHelpMan{"getrawchangeaddress",
-                "\nReturns a new Bitcoin address, for receiving change.\n"
+                "\nReturns a new QuBitcoin address, for receiving change.\n"
                 "This is for use with raw transactions, NOT normal use.\n",
                 {
                     {"address_type", RPCArg::Type::STR, RPCArg::DefaultHint{"set by -changetype"}, "The address type to use. Options are \"legacy\", \"p2sh-segwit\", \"bech32\", and \"bech32m\"."},
@@ -122,7 +122,7 @@ RPCHelpMan setlabel()
     return RPCHelpMan{"setlabel",
                 "\nSets the label associated with the given address.\n",
                 {
-                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The bitcoin address to be associated with a label."},
+                    {"address", RPCArg::Type::STR, RPCArg::Optional::NO, "The QuBitcoin address to be associated with a label."},
                     {"label", RPCArg::Type::STR, RPCArg::Optional::NO, "The label to assign to the address."},
                 },
                 RPCResult{RPCResult::Type::NONE, "", ""},
@@ -169,7 +169,7 @@ RPCHelpMan listaddressgroupings()
                         {
                             {RPCResult::Type::ARR_FIXED, "", "",
                             {
-                                {RPCResult::Type::STR, "address", "The bitcoin address"},
+                                {RPCResult::Type::STR, "address", "The QuBitcoin address"},
                                 {RPCResult::Type::STR_AMOUNT, "amount", "The amount in " + CURRENCY_UNIT},
                                 {RPCResult::Type::STR, "label", /*optional=*/true, "The label"},
                             }},

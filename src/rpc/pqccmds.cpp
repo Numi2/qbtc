@@ -107,7 +107,7 @@ static RPCHelpMan verifymessagepqc()
 static RPCHelpMan getnewpqcaddress()
 {
     return RPCHelpMan{"getnewpqcaddress",
-        "Generate a new Qubitcoin quantum-safe (Dilithium3) address and key pair (witness v2).\n",
+        "Generate a new QuBitcoin quantum-safe (Dilithium3) address and key pair (witness v2).\n",
         {},
         {
             RPCResult{RPCResult::Type::STR, "address", "The new Bech32m v2 address (qbc1p...)"},

@@ -1975,7 +1975,7 @@ CWallet::ScanResult CWallet::ScanForWalletTransactions(const uint256& start_bloc
                     break;
                 }
                 for (size_t posInBlock = 0; posInBlock < block.vtx.size(); ++posInBlock) {
-                    SyncTransaction(block.vtx[posInBlock], TxStateConfirmed{block_hash, block_height, static_cast<int>(posInBlock)}, fUpdate, /*rescanning_old_block=*/true);
+                    SyncTransaction(block.vtx[posInBlock], TxStateConfirmed{block.hash, block.height, static_cast<int>(posInBlock)}, fUpdate, /*rescanning_old_block=*/true);
                 }
                 // scan succeeded, record block as most recent successfully scanned
                 result.last_scanned_block = block_hash;
@@ -4721,5 +4721,65 @@ std::optional<CKey> CWallet::GetKey(const CKeyID& keyid) const
         }
     }
     return std::nullopt;
+}
+
+bool CWallet::SignP2WPQCTransaction(CMutableTransaction& tx, const std::map<COutPoint, Coin>& coins, int nIn, const CScript& scriptPubKey, CAmount amount) const
+{
+    std::vector<unsigned char> program;
+    int witnessversion = -1;
+    
+    // Check if this is a P2WPQC (version 2) output
+    if (!scriptPubKey.IsWitnessProgram(witnessversion, program) || witnessversion != 2 || program.size() != 32) {
+        return false;
+    }
+    
+    // Create a temporary transaction for signing
+    CMutableTransaction txTemp(tx);
+    
+    // Get access to the PQC keystore
+    const auto& pqc_keystore = GetPQCKeyStore();
+    
+    // Generate signature
+    std::vector<unsigned char> sig;
+    if (!pqc_keystore.SignTransaction(CTransaction(txTemp), sig, nIn, amount, scriptPubKey)) {
+        return false;
+    }
+    
+    // For P2WPQC we need to recover the public key that corresponds to this address
+    std::vector<unsigned char> pubkey;
+    if (!GetPubKeyForP2WPQC(scriptPubKey, pubkey)) {
+        return false;
+    }
+    
+    // Update the witness stack: [signature, pubkey]
+    tx.vin[nIn].scriptWitness.stack.clear();
+    tx.vin[nIn].scriptWitness.stack.push_back(sig);
+    tx.vin[nIn].scriptWitness.stack.push_back(pubkey);
+    
+    return true;
+}
+
+bool CWallet::GetPubKeyForP2WPQC(const CScript& scriptPubKey, std::vector<unsigned char>& pubkey) const
+{
+    std::vector<unsigned char> program;
+    int witnessversion = -1;
+    
+    // Must be witness v2 program with 32-byte hash
+    if (!scriptPubKey.IsWitnessProgram(witnessversion, program) || witnessversion != 2 || program.size() != 32) {
+        return false;
+    }
+    
+    CTxDestination dest = WitnessUnknown{2, program};
+    std::string address = EncodeDestination(dest);
+    
+    // Look up the address in our database to find the matching public key
+    for (const auto& spk_man_pair : m_spk_managers) {
+        if (auto keys = spk_man_pair.second->GetDilithiumKeysForAddress(address)) {
+            pubkey = keys->pubkey;
+            return true;
+        }
+    }
+    
+    return false;
 }
 } // namespace wallet

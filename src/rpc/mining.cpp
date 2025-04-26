@@ -71,17 +71,55 @@ static bool g_pqc_key_loaded = false;
 static void EnsurePqcKeyLoaded()
 {
     if (g_pqc_key_loaded) return;
+    
+    // Check command-line argument for private key file
     const std::string keyFile = gArgs.GetArg("-pqcprivkey", std::string());
     if (keyFile.empty()) {
         throw JSONRPCError(RPC_INVALID_PARAMETER, "Missing -pqcprivkey (path to Dilithium private key file)");
     }
+    
+    // Load PQC private key from file
     std::ifstream f(keyFile, std::ios::binary);
     if (!f) throw JSONRPCError(RPC_INTERNAL_ERROR, "Cannot open pqc private key file");
+    
     std::vector<unsigned char> data((std::istreambuf_iterator<char>(f)), std::istreambuf_iterator<char>());
     if (data.empty()) throw JSONRPCError(RPC_INTERNAL_ERROR, "Empty pqc private key file");
-    g_pqc_privkey = LoadDilithium3PrivateKey(data.data(), data.size());
-    g_pqc_pubkey = ExportDilithium3PublicKey(g_pqc_privkey);
-    g_pqc_key_loaded = true;
+    
+    // Need to ensure OQS provider is loaded before key operations
+    LoadOQSProvider();
+    
+    try {
+        // Load the key and extract public key
+        g_pqc_privkey = LoadDilithium3PrivateKey(data.data(), data.size());
+        g_pqc_pubkey = ExportDilithium3PublicKey(g_pqc_privkey);
+        g_pqc_key_loaded = true;
+    } catch (const std::exception& e) {
+        throw JSONRPCError(RPC_INTERNAL_ERROR, 
+            strprintf("Failed to load Dilithium private key: %s", e.what()));
+    }
+}
+
+// Sign a block header with the loaded Dilithium key
+static bool SignBlockHeader(CBlock& block)
+{
+    EnsurePqcKeyLoaded();
+    
+    // Get header hash (we use Blake3 instead of SHA256d)
+    uint256 headerHash = block.GetHash();
+    
+    try {
+        // Use the BLAKE3-tagged signing to create the header signature
+        std::vector<uint8_t> preimage(headerHash.begin(), headerHash.end());
+        auto sig = SignDilithium3(g_pqc_privkey, preimage.data(), preimage.size());
+        
+        // Set the block's signature fields
+        block.headerPubKey = g_pqc_pubkey;
+        block.headerSig = std::move(sig);
+        return true;
+    } catch (const std::exception& e) {
+        LogPrintf("Failed to sign block with Dilithium: %s\n", e.what());
+        return false;
+    }
 }
 } // namespace
 //----------------------------------------------------------------------------
@@ -178,13 +216,11 @@ static bool GenerateBlock(ChainstateManager& chainman, CBlock&& block, uint64_t&
     if (block.nNonce == std::numeric_limits<uint32_t>::max()) {
         return true;
     }
+    
     // Sign the block header with Dilithium private key (post-quantum security)
-    EnsurePqcKeyLoaded();
-    // Message to sign: header hash used for PoW
-    uint256 headerHash = block.GetHash();
-    std::vector<unsigned char> sig = SignDilithium3(g_pqc_privkey, headerHash.begin(), headerHash.size());
-    block.headerPubKey = g_pqc_pubkey;
-    block.headerSig = std::move(sig);
+    if (!SignBlockHeader(block)) {
+        throw JSONRPCError(RPC_INTERNAL_ERROR, "Failed to sign block with Dilithium key");
+    }
 
     block_out = std::make_shared<const CBlock>(std::move(block));
 

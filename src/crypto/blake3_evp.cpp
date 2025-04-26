@@ -2,6 +2,7 @@
 #include <crypto/blake3.h>
 #include <openssl/evp.h>
 #include <stdexcept>
+#include <mutex>
 
 // EVP method callbacks for BLAKE3
 static int blake3_evp_init(EVP_MD_CTX* ctx) {
@@ -31,21 +32,22 @@ static int blake3_evp_copy(EVP_MD_CTX* to, const EVP_MD_CTX* from) {
 
 const EVP_MD* EVP_blake3(void) {
     static EVP_MD* md = nullptr;
-    if (md == nullptr) {
-        md = EVP_MD_meth_new(NID_undef, NID_undef);
-        if (!md ||
-            EVP_MD_meth_set_result_size(md, BLAKE3_OUT_LEN) != 1 ||
-            EVP_MD_meth_set_input_blocksize(md, BLAKE3_BLOCK_LEN) != 1 ||
-            EVP_MD_meth_set_app_datasize(md, sizeof(blake3_hasher)) != 1 ||
-            EVP_MD_meth_set_init(md, blake3_evp_init) != 1 ||
-            EVP_MD_meth_set_update(md, blake3_evp_update) != 1 ||
-            EVP_MD_meth_set_final(md, blake3_evp_final) != 1 ||
-            EVP_MD_meth_set_copy(md, blake3_evp_copy) != 1) {
+    static std::once_flag init_flag;
+    std::call_once(init_flag, []() {
+        EVP_MD* m = EVP_MD_meth_new(NID_undef, NID_undef);
+        if (!m ||
+            EVP_MD_meth_set_result_size(m, BLAKE3_OUT_LEN) != 1 ||
+            EVP_MD_meth_set_input_blocksize(m, BLAKE3_BLOCK_LEN) != 1 ||
+            EVP_MD_meth_set_app_datasize(m, sizeof(blake3_hasher)) != 1 ||
+            EVP_MD_meth_set_init(m, blake3_evp_init) != 1 ||
+            EVP_MD_meth_set_update(m, blake3_evp_update) != 1 ||
+            EVP_MD_meth_set_final(m, blake3_evp_final) != 1 ||
+            EVP_MD_meth_set_copy(m, blake3_evp_copy) != 1) {
             throw std::runtime_error("EVP_blake3: failed to create EVP_MD");
         }
-        // Register the digest with OpenSSL
-        EVP_add_digest(md);
-    }
+        EVP_add_digest(m);
+        md = m;
+    });
     return md;
 }
 

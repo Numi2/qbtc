@@ -1,4 +1,3 @@
-
 // src/wallet/feebumper.h
 
 #ifndef QUBITCOIN_WALLET_FEEBUMPER_H
@@ -110,6 +109,7 @@ private:
 public:
     SignatureWeightChecker(SignatureWeights& weights, const BaseSignatureChecker& checker) : DeferringSignatureChecker(checker), m_weights(weights) {}
 
+    /* // REMOVED ECDSA Override
     bool CheckECDSASignature(const std::vector<unsigned char>& sig, const std::vector<unsigned char>& pubkey, const CScript& script, SigVersion sigversion) const override
     {
         if (m_checker.CheckECDSASignature(sig, pubkey, script, sigversion)) {
@@ -118,6 +118,9 @@ public:
         }
         return false;
     }
+    */
+
+    // TODO: Add CheckDilithiumSignature override if needed for weight calculation
 };
 
 } // namespace feebumper

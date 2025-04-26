@@ -642,15 +642,8 @@ public:
     }
     util::Result<WalletMigrationResult> migrateWallet(const std::string& name, const SecureString& passphrase) override
     {
-        auto res = wallet::MigrateLegacyToDescriptor(name, passphrase, m_context);
-        if (!res) return util::Error{util::ErrorString(res)};
-        WalletMigrationResult out{
-            .wallet = MakeWallet(m_context, res->wallet),
-            .watchonly_wallet_name = res->watchonly_wallet ? std::make_optional(res->watchonly_wallet->GetName()) : std::nullopt,
-            .solvables_wallet_name = res->solvables_wallet ? std::make_optional(res->solvables_wallet->GetName()) : std::nullopt,
-            .backup_path = res->backup_path,
-        };
-        return out;
+        // Wallet migration is not supported in QuBitcoin
+        return util::Error{_("Wallet migration is not supported in QuBitcoin")};
     }
     bool isEncrypted(const std::string& wallet_name) override
     {
