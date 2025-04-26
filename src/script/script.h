@@ -189,8 +189,9 @@ enum opcodetype
     OP_CHECKMULTISIG = 0xae,
     OP_CHECKMULTISIGVERIFY = 0xaf,
 
-    // expansion
-    OP_NOP1 = 0xb0,
+    // Post-quantum signature verify (Dilithium) replaces OP_NOP1
+    OP_CHECKDILITHIUMVERIFY = 0xb0,
+    OP_NOP1 = OP_CHECKDILITHIUMVERIFY,  // deprecated alias; unreachable pre-PQHeight
     OP_CHECKLOCKTIMEVERIFY = 0xb1,
     OP_NOP2 = OP_CHECKLOCKTIMEVERIFY,
     OP_CHECKSEQUENCEVERIFY = 0xb2,
