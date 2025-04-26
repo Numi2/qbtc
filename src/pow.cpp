@@ -8,9 +8,25 @@
 #include <util/check.h>
 #include <blake3.h>
 
+/** Compute the proof-of-work hash using BLAKE3-256 over the serialized block header.
+ *  Every node and every miner must BLAKE3-hash the same 80-byte slice.
+ *  Do not include headerPubKey/headerSig (they are part of the full block and
+ *  are serialized after the base header) in the hash input, otherwise signing
+ *  the header after PoW invalidates the found nonce.
+ */
 static uint256 GetBlockProofHash(const CBlockHeader& header)
 {
-    // serialize header
+    // Serialize only the 80-byte CBlockHeader for proof-of-work hashing
+    // Bytes hashed (in this order, little-endian):
+    //   - 4 bytes:  nVersion
+    //   - 32 bytes: hashPrevBlock
+    //   - 32 bytes: hashMerkleRoot
+    //   - 4 bytes:  nTime
+    //   - 4 bytes:  nBits
+    //   - 4 bytes:  nNonce
+    // Note: headerPubKey and headerSig fields are part of CBlock and
+    // serialized after the header; they are excluded from this hash input
+    // so that signing the header post-PoW does not invalidate the nonce.
     CDataStream ss(SER_NETWORK, PROTOCOL_VERSION);
     ss << header;
 

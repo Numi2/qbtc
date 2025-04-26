@@ -273,3 +273,10 @@ l BIP-341 Taproot signature‐hash preimage implementation, plus a minimal test 
     script.
 
     This is substantial; let me know if you’d like to proceed with the first two changes (EvalScript and VerifyWitnessProgram).
+
+
+
+
+    5.  I’ve added a clear doc‐comment in pow.cpp spelling out exactly the 80 bytes that get BLAKE3-hashed (version, prevHash, merkleRoot, nTime,
+    nBits, nNonce) and noted that the post-quantum headerPubKey/headerSig live in the larger CBlock serialization (after those 80 bytes) so they
+    won’t invalidate a previously found nonce. Let me know if you’d like anything else!

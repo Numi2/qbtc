@@ -102,7 +102,9 @@ public:
         consensus.PQHeight = 0;
         // No BIP9 warning window on a fresh network
         consensus.MinBIP9WarningHeight = 0;
-        consensus.powLimit = uint256{"00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
+        // Lower the powLimit by ~10× to account for BLAKE3 being ~10× faster than SHA-256,
+        // so that initial difficulty (genesis difficulty) yields ~10-minute block spacing.
+        consensus.powLimit = uint256{"00000000199999999999999999999999999999999999999999999999"};
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 10 * 60;
         consensus.fPowAllowMinDifficultyBlocks = false;
@@ -217,7 +219,8 @@ public:
         consensus.PQHeight = 0;
         // No BIP9 warning window on a fresh network
         consensus.MinBIP9WarningHeight = 0;
-        consensus.powLimit = uint256{"00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
+        // Adjust powLimit similarly for testnet
+        consensus.powLimit = uint256{"00000000199999999999999999999999999999999999999999999999"};
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 10 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;
@@ -315,7 +318,8 @@ public:
         consensus.PQHeight = 0;
         // No BIP9 warning window on a fresh network
         consensus.MinBIP9WarningHeight = 0;
-        consensus.powLimit = uint256{"00000000ffffffffffffffffffffffffffffffffffffffffffffffffffffffff"};
+        // Adjust powLimit similarly for testnet4
+        consensus.powLimit = uint256{"00000000199999999999999999999999999999999999999999999999"};
         consensus.nPowTargetTimespan = 14 * 24 * 60 * 60; // two weeks
         consensus.nPowTargetSpacing = 10 * 60;
         consensus.fPowAllowMinDifficultyBlocks = true;

@@ -27,6 +27,7 @@ target_sources(test_bitcoin
     hash_qs_tests.cpp
     net_qs_tests.cpp
     pqckeys_tests.cpp
+    crypto_tests.cpp
 )
 target_link_libraries(test_bitcoin
     bitcoin_wallet

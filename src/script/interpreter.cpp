@@ -251,6 +251,8 @@ int FindAndDelete(CScript& script, const CScript& b)
 }
 
 namespace {
+// Maximum allowed nested IF/NOTIF depth
+static constexpr uint32_t MAX_COND_STACK_DEPTH = 100;
 /** A data type to abstract out the condition stack during script execution.
  *
  * Conceptually it acts like a vector of booleans, one for each level of nested
@@ -279,6 +281,8 @@ private:
 public:
     bool empty() const { return m_stack_size == 0; }
     bool all_true() const { return m_first_false_pos == NO_FALSE; }
+    // Current depth of nested conditionals
+    uint32_t size() const { return m_stack_size; }
     void push_back(bool f)
     {
         if (m_first_false_pos == NO_FALSE && !f) {
@@ -359,6 +363,8 @@ static bool EvalChecksigTapscript(const valtype& sig, const valtype& pubkey, Scr
         if (execdata.m_validation_weight_left < 0) {
             return set_error(serror, SCRIPT_ERR_TAPSCRIPT_VALIDATION_WEIGHT);
         }
+        // Hard assert no underflow
+        assert(execdata.m_validation_weight_left >= 0);
     }
     if (pubkey.size() == 0) {
         return set_error(serror, SCRIPT_ERR_PUBKEYTYPE);
@@ -421,7 +427,11 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
     ConditionStack vfExec;
     std::vector<valtype> altstack;
     set_error(serror, SCRIPT_ERR_UNKNOWN_ERROR);
-    if ((sigversion == SigVersion::BASE || sigversion == SigVersion::WITNESS_V0) && script.size() > MAX_SCRIPT_SIZE) {
+    if (script.size() > MAX_SCRIPT_SIZE) {
+        return set_error(serror, SCRIPT_ERR_SCRIPT_SIZE);
+    }
+    // Tapscript size cap (BIP-342)
+    if (sigversion == SigVersion::TAPSCRIPT && script.size() > MAX_TAPSCRIPT_SIZE) {
         return set_error(serror, SCRIPT_ERR_SCRIPT_SIZE);
     }
     int nOpCount = 0;
@@ -448,6 +458,15 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                 if (opcode > OP_16 && ++nOpCount > MAX_OPS_PER_SCRIPT) {
                     return set_error(serror, SCRIPT_ERR_OP_COUNT);
                 }
+            } else {
+                // Also enforce max-ops under Tapscript
+                if (opcode > OP_16 && ++nOpCount > MAX_OPS_PER_SCRIPT) {
+                    return set_error(serror, SCRIPT_ERR_OP_COUNT);
+                }
+            }
+            // Always enforce stack limits after each opcode
+            if (stack.size() + altstack.size() > MAX_STACK_SIZE) {
+                return set_error(serror, SCRIPT_ERR_STACK_SIZE);
             }
 
             if (opcode == OP_CAT ||
@@ -625,6 +644,10 @@ bool EvalScript(std::vector<std::vector<unsigned char> >& stack, const CScript& 
                         if (opcode == OP_NOTIF)
                             fValue = !fValue;
                         popstack(stack);
+                    }
+                    // Enforce max nested conditional depth
+                    if (vfExec.size() >= MAX_COND_STACK_DEPTH) {
+                        return set_error(serror, SCRIPT_ERR_TOO_MANY_CONDITIONALS);
                     }
                     vfExec.push_back(fValue);
                 }

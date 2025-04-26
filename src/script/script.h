@@ -34,7 +34,10 @@ static const int MAX_PUBKEYS_PER_MULTISIG = 20;
 static constexpr unsigned int MAX_PUBKEYS_PER_MULTI_A = 999;
 
 // Maximum script length in bytes
+// Maximum script length in bytes (including both base and witness scripts)
 static const int MAX_SCRIPT_SIZE = 10000;
+// Maximum Tapscript leaf script length in bytes (BIP-342)
+static const int MAX_TAPSCRIPT_SIZE = MAX_SCRIPT_SIZE;
 
 // Maximum number of values on script interpreter stack
 static const int MAX_STACK_SIZE = 1000;

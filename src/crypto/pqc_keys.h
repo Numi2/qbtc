@@ -1,6 +1,8 @@
-// Post-Quantum Cryptography key management (Dilithium3) using OpenSSL 3.x EVP + Provider API
-#ifndef BITCOIN_CRYPTO_PQC_KEYS_H
-#define BITCOIN_CRYPTO_PQC_KEYS_H
+// Copyright (c) 20XX The Qubitcoin Core developers
+// Distributed under the MIT software license, see the accompanying file COPYING.
+//
+#ifndef QUBITCOIN_CRYPTO_PQC_KEYS_H
+#define QUBITCOIN_CRYPTO_PQC_KEYS_H
 
 #include <openssl/evp.h>
 #include <cstddef>
@@ -56,4 +58,4 @@ std::vector<unsigned char> SignDilithium3(EVP_PKEY* pkey, const unsigned char* m
  */
 bool VerifyDilithium3(EVP_PKEY* pkey, const unsigned char* sig, std::size_t siglen, const unsigned char* msg, std::size_t msglen);
 
-#endif // BITCOIN_CRYPTO_PQC_KEYS_H
+#endif // QUBITCOIN_CRYPTO_PQC_KEYS_H

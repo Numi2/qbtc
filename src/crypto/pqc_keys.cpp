@@ -108,21 +108,18 @@ std::vector<unsigned char> SignDilithium3(EVP_PKEY* pkey, const unsigned char* m
 }
 
 // Verify Dilithium3 signature over data (BLAKE3 digest)
-bool VerifyDilithium3(EVP_PKEY* pkey, const unsigned char* sig, std::size_t siglen, const unsigned char* msg, std::size_t msglen) {
-    LoadOQSProvider();
-    EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
-    if (!mdctx) throw std::runtime_error("pqc_keys: EVP_MD_CTX_new failed");
-    if (EVP_DigestVerifyInit(mdctx, nullptr, EVP_blake3(), nullptr, pkey) != 1) {
-        EVP_MD_CTX_free(mdctx);
-        throw std::runtime_error("pqc_keys: DigestVerifyInit failed");
+// Verify a Dilithium-3 signature using the raw EVP API
+// Returns true if signature is valid, false on bad signature or error
+bool VerifyDilithium3(EVP_PKEY* pkey,
+                      const unsigned char* sig, std::size_t siglen,
+                      const unsigned char* msg, std::size_t msglen) {
+    EVP_PKEY_CTX* ctx = EVP_PKEY_CTX_new_from_pkey(nullptr, pkey, nullptr);
+    if (!ctx) return false;
+    if (EVP_PKEY_verify_init(ctx) <= 0) {
+        EVP_PKEY_CTX_free(ctx);
+        return false;
     }
-    if (EVP_DigestVerifyUpdate(mdctx, msg, msglen) != 1) {
-        EVP_MD_CTX_free(mdctx);
-        throw std::runtime_error("pqc_keys: DigestVerifyUpdate failed");
-    }
-    int ret = EVP_DigestVerifyFinal(mdctx, sig, siglen);
-    EVP_MD_CTX_free(mdctx);
-    if (ret == 1) return true;
-    if (ret == 0) return false;
-    throw std::runtime_error("pqc_keys: DigestVerifyFinal error");
+    int ret = EVP_PKEY_verify(ctx, sig, siglen, msg, msglen);
+    EVP_PKEY_CTX_free(ctx);
+    return ret == 1;
 }
