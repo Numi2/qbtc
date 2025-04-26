@@ -3460,6 +3460,12 @@ void PeerManagerImpl::ProcessMessage(CNode& pfrom, const std::string& msg_type, 
             pfrom.fDisconnect = true;
             return;
         }
+        // disconnect peers advertising non-PQ (legacy) protocol version
+        if (nVersion < PQ_PEER_PROTO_VERSION) {
+            LogDebug(BCLog::NET, "peer using non-PQ version %i, %s\n", nVersion, pfrom.DisconnectMsg(fLogIPs));
+            pfrom.fDisconnect = true;
+            return;
+        }
 
         if (!vRecv.empty()) {
             // The version message includes information about the sending node which we don't use:

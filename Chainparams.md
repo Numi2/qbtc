@@ -66,5 +66,5 @@ Use `-chain=qubit` for mainnet and `-chain=qubit-test` for testnet (aliases for 
  - Bech32 HRP: `tq`
 
  ### DNS Seeds
- - testnet-seed1.qubitcoin.org
- - testnet-seed2.qubitcoin.org
+ - testnet-seed1.siqn.org
+ - testnet-seed2.siqn.org

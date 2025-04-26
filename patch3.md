@@ -236,3 +236,40 @@ l BIP-341 Taproot signature‐hash preimage implementation, plus a minimal test 
     switched us to a tagged Blake3 finalization. I also added a property‐based smoke test touching the key-path SIGHASH_ALL in script/tx_sighash_tests.cpp.
 
     Please review the changes and let me know if you’d pref
+
+
+
+    5.
+
+     It turns out the script interpreter’s code (the big EvalScript implementation) lives in src/script/script.cpp, not interpreter.cpp. That file
+    defines how each opcode is executed. We’ll inject our new case OP_CHECKDILITHIUMVERIFY: there, then add logic in VerifyScript /
+    VerifyWitnessProgram lower in the same file.
+
+    I’ll:
+
+        1. Edit src/script/script.cpp:
+           a. In `EvalScript(...)`, find the main `switch (opcode)` and add:    case OP_CHECKDILITHIUMVERIFY: {
+                  // Expect <sig> <pubkey> on stack
+                  if (stack.size() < 2) return set_error(error, SCRIPT_ERR_INVALID_STACK_OPERATION);
+                  std::vector<uint8_t> pubkey = std::move(stack.back()); stack.pop_back();
+                  std::vector<uint8_t> sig    = std::move(stack.back()); stack.pop_back();
+                  uint256 sighash = SignatureHash(…);  // same as SIGHASH_ALL by default
+                  bool ok = checker.CheckDilithiumSignature(sig, pubkey, sighash);
+                  if (!ok) return set_error(error, SCRIPT_ERR_VERIFY);
+                  stack.push_back({}); // push true
+                  break;
+               }
+        2. In `VerifyScript(...)`, locate the witness‐program verification section (there’s a helper `VerifyWitnessProgram(...)`).
+           a. Add a branch for `version==1 && program.size()==32`:
+            * Build a new stack: push the program (32‐byte) as "pubkeyhash".
+
+            * Run script: exactly one `OP_CHECKDILITHIUMVERIFY` must appear.
+
+            * Fail if any `OP_CHECKSIG`/`OP_CHECKSIGVERIFY`/`OP_CHECKSIGQS` opcode is encountered.
+        3. In ContextualCheckBlock (src/validation.cpp), add block‐height 0 guard to reject any non‐PQ scripts before height 0 (i.e. ban
+    P2PKH/P2SH/v0).
+            * Since height 0 is genesis, you’ll simply disallow any scriptPubKey types other than v1 32‐byte witness.
+        4. Add unit tests in tests/script_tests.cpp and functional tests in test/functional/, covering valid PQ spends, wrong sig, legacy op in PQ
+    script.
+
+    This is substantial; let me know if you’d like to proceed with the first two changes (EvalScript and VerifyWitnessProgram).

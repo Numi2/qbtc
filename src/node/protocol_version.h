@@ -9,13 +9,17 @@
  * network protocol versioning
  */
 
-static const int PROTOCOL_VERSION = 1;
+// Protocol version post-PQ activation
+static const int PROTOCOL_VERSION = 90030;
 
 //! initial proto version
 static const int INIT_PROTO_VERSION = 1;
 
 //! disconnect from peers with lower proto version
+// Disconnect from peers older than this proto version
 static const int MIN_PEER_PROTO_VERSION = 1;
+// Disconnect from peers advertising non-PQ (legacy) protocol version
+static constexpr int PQ_PEER_PROTO_VERSION = PROTOCOL_VERSION;
 
 //! BIP 0031, pong message, is enabled for all versions AFTER this one
 static const int BIP0031_VERSION = 1;
