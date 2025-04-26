@@ -87,6 +87,11 @@ bool ExtractDestination(const CScript& scriptPubKey, CTxDestination& addressRet)
         addressRet = tap;
         return true;
     }
+    case TxoutType::WITNESS_V2_PQC: {
+        // Post-quantum address: Dilithium3 witness v2
+        addressRet = WitnessV2PQC(vSolutions[0]);
+        return true;
+    }
     case TxoutType::ANCHOR: {
         addressRet = PayToAnchor();
         return true;
@@ -142,6 +147,15 @@ public:
     {
         return CScript() << OP_1 << ToByteVector(tap);
     }
+    CScript operator()(const WitnessV2PQC& pqc) const
+    {
+        // Quantum-safe Dilithium3 address: version 2 witness program
+        CScript script;
+        script << CScript::EncodeOP_N(2);
+        // Push program bytes
+        for (unsigned char b : pqc.GetProgram()) script << b;
+        return script;
+    }
 
     CScript operator()(const WitnessUnknown& id) const
     {
@@ -159,6 +173,7 @@ public:
     bool operator()(const WitnessV0KeyHash& dest) const { return true; }
     bool operator()(const WitnessV0ScriptHash& dest) const { return true; }
     bool operator()(const WitnessV1Taproot& dest) const { return true; }
+    bool operator()(const WitnessV2PQC& dest) const { return true; }
     bool operator()(const WitnessUnknown& dest) const { return true; }
 };
 } // namespace

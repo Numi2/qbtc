@@ -28,7 +28,8 @@ enum class TxoutType {
     WITNESS_V0_SCRIPTHASH,
     WITNESS_V0_KEYHASH,
     WITNESS_V1_TAPROOT,
-    WITNESS_UNKNOWN, //!< Only for Witness versions not already defined above
+    WITNESS_V2_PQC,    //!< Witness version 2 quantum-safe (Dilithium3) programs
+    WITNESS_UNKNOWN,   //!< Only for Witness versions not already defined above
 };
 
 /** Get the name of a TxoutType as a string */

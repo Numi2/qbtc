@@ -8,10 +8,25 @@
 #include <script/standard.h>      // CTxDestination, CNoDestination, CKeyID
 
 static const std::string HRP = "qbc";
-static const int WIT_VERSION = 1; // encoded as the “p” in “qbc1p…”
+// Witness version for quantum-safe (Dilithium3) addresses (Bech32m v2)
+static const int WIT_VERSION = 2; // encoded as the “p” in “qbc1p…"
 
 std::string EncodeDestination(const CTxDestination& dest) {
-    // we only support raw key‐hash destinations:
+    // Post-quantum: Dilithium3 witness v2 address
+    if (auto pqc = std::get_if<WitnessV2PQC>(&dest)) {
+        // Build data: [version (2)] + program (5-bit groups)
+        std::vector<unsigned char> data;
+        data.push_back(WIT_VERSION);
+        std::vector<unsigned char> prog5;
+        bech32::ConvertBits<8,5,true>(
+            prog5,
+            pqc->GetProgram().begin(), pqc->GetProgram().end()
+        );
+        data.insert(data.end(), prog5.begin(), prog5.end());
+        // Bech32m encode
+        return bech32::Encode(HRP, data, bech32::Encoding::BECH32M);
+    }
+    // Fallback: legacy key‐hash destinations
     const CKeyID* keyid = std::get_if<CKeyID>(&dest);
     if (!keyid) return {};
 
@@ -50,7 +65,7 @@ CTxDestination DecodeDestination(const std::string& address,
         return CNoDestination();
     }
 
-    // 2) extract and check witness version
+    // 2) extract and check post-quantum witness version
     int witver = data[0];
     if (witver != WIT_VERSION) {
         error_msg = "Unsupported witness version: " + std::to_string(witver);
@@ -73,10 +88,8 @@ CTxDestination DecodeDestination(const std::string& address,
         return CNoDestination();
     }
 
-    // 5) build the CKeyID and return
-    CKeyID keyid;
-    std::copy(prog8.begin(), prog8.end(), keyid.begin());
-    return keyid;
+    // 5) build a post-quantum Dilithium v2 address destination
+    return WitnessV2PQC(prog8);
 
 }
 

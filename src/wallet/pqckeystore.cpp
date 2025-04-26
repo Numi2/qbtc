@@ -115,7 +115,18 @@ bool CPQCKeyStore::ImportPQCAddress(const std::string& address, const std::strin
     } catch (...) {
         return false;
     }
-    // TODO: Persist this keypair
+    // Persist this keypair: store private key in wallet DB and update in-memory map
+    {
+        // Use current next_index to assign this imported key
+        WalletBatch batch(wallet->GetDatabase());
+        // Persist raw private key bytes under PQCKEY at next_index
+        batch.WriteIC(std::make_pair(DBKeys::PQCKEY, next_index), priv_der);
+        // Bump stored PQCINDEX to include this new key
+        batch.WriteIC(DBKeys::PQCINDEX, next_index + 1);
+        // Update in-memory index and map
+        m_address_priv_map[address] = priv_der;
+        next_index++;
+    }
 
     // Import address script to wallet
     std::string err;

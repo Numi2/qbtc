@@ -90,6 +90,23 @@ struct WitnessV1Taproot : public XOnlyPubKey
     explicit WitnessV1Taproot(const XOnlyPubKey& xpk) : XOnlyPubKey(xpk) {}
 };
 
+/**
+ * Post-quantum Qubitcoin (Dilithium3) address: witness version 2 program
+ */
+struct WitnessV2PQC {
+private:
+    std::vector<unsigned char> m_program;
+public:
+    explicit WitnessV2PQC(const std::vector<unsigned char>& prog) : m_program(prog) {}
+    const std::vector<unsigned char>& GetProgram() const LIFETIMEBOUND { return m_program; }
+    friend bool operator==(const WitnessV2PQC& a, const WitnessV2PQC& b) {
+        return a.m_program == b.m_program;
+    }
+    friend bool operator<(const WitnessV2PQC& a, const WitnessV2PQC& b) {
+        return a.m_program < b.m_program;
+    }
+};
+
 //! CTxDestination subtype to encode any future Witness version
 struct WitnessUnknown
 {
@@ -139,7 +156,16 @@ struct PayToAnchor : public WitnessUnknown
  *  * WitnessUnknown: TxoutType::WITNESS_UNKNOWN destination (P2W??? address)
  *  A CTxDestination is the internal data type encoded in a bitcoin address
  */
-using CTxDestination = std::variant<CNoDestination, PubKeyDestination, PKHash, ScriptHash, WitnessV0ScriptHash, WitnessV0KeyHash, WitnessV1Taproot, PayToAnchor, WitnessUnknown>;
+using CTxDestination = std::variant<CNoDestination,
+                                   PubKeyDestination,
+                                   PKHash,
+                                   ScriptHash,
+                                   WitnessV0ScriptHash,
+                                   WitnessV0KeyHash,
+                                   WitnessV1Taproot,
+                                   WitnessV2PQC,
+                                   PayToAnchor,
+                                   WitnessUnknown>;
 
 /** Check whether a CTxDestination corresponds to one with an address. */
 bool IsValidDestination(const CTxDestination& dest);

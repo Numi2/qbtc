@@ -91,13 +91,13 @@ static std::string serviceFlagToStr(size_t bit)
     const uint64_t service_flag = 1ULL << bit;
     switch ((ServiceFlags)service_flag) {
     case NODE_NONE: abort();  // impossible
-    case NODE_NETWORK:         return "NETWORK";
-    case NODE_BLOOM:           return "BLOOM";
-    case NODE_WITNESS:         return "WITNESS";
-    case NODE_COMPACT_FILTERS: return "COMPACT_FILTERS";
-    case NODE_NETWORK_LIMITED: return "NETWORK_LIMITED";
-    case NODE_P2P_V2:          return "P2P_V2";
-    // Not using default, so we get warned when a case is missing
+    case NODE_NETWORK:         return "NODE_NETWORK";
+    case NODE_BLOOM:           return "NODE_BLOOM";
+    case NODE_WITNESS:         return "NODE_WITNESS";
+    case NODE_COMPACT_FILTERS: return "NODE_COMPACT_FILTERS";
+    case NODE_NETWORK_LIMITED: return "NODE_NETWORK_LIMITED";
+    case NODE_P2P_V2:          return "NODE_P2P_V2";
+    case NODE_PQ:              return "NODE_PQ";
     }
 
     return strprintf("UNKNOWN[2^%u]", bit);

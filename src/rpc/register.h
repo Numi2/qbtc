@@ -34,7 +34,8 @@ static inline void RegisterAllCoreRPCCommands(CRPCTable &t)
     RegisterNetRPCCommands(t);
     RegisterOutputScriptRPCCommands(t);
     RegisterRawTransactionRPCCommands(t);
-    RegisterSignMessageRPCCommands(t);
+    // Remove legacy ECDSA signmessage RPC commands
+    // RegisterSignMessageRPCCommands(t);
 #ifdef ENABLE_EXTERNAL_SIGNER
     RegisterSignerRPCCommands(t);
 #endif // ENABLE_EXTERNAL_SIGNER

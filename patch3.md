@@ -180,3 +180,59 @@
     This will give you exactly the same on‐chain sighash data as consensus, but with
     Blake3 in place of SHA256d, and Dilithium in place of Schnorr/ECDSA. Im gonna proceed with those precise code changes in script/interpreter.cpp,
     script/sign.cpp, and the wallet PSBT layers next!
+
+
+
+      Implementing full SegWit-v0 and Taproot signature hashing in Blake3 is a big lift because those routines live deep in consensus code and must mirror BIP-143 and
+    BIP-341 exactly (just swapping out SHA256d for Blake3). Given the size and sensitivity, can you confirm you want me to proceed with:
+
+    • Writing a complete SignatureHash() that reconstructs the BIP-143 preimage (all four fields) but uses tagged Blake3 for every hash step (including the final digest),
+    • Writing a complete TaprootSignatureHash() that matches BIP-341 except using our Blake3-TapSighash,
+    • Adding and wiring these into script/interpreter.cpp so that the consensus library uses them under v0 and v1,
+
+4.
+ We’ve already swapped in Blake3 everywhere and laid a solid foundation:
+
+        * Complete Blake3‐tagged BIP-143 (SegWit v0) sighash
+        * Stubbed in Blake3 “TapSighash” with minimal exec-data serialization
+        * First‐class V2 PQC addresses end-to-end
+
+    To finish the full BIP-341 spec (annex, extFlag, all sub-hashes, per-UTXO serialization, script vs key path, etc.), here’s what remains:
+
+        1. Pull in the real `ScriptExecutionData` struct (in `sign.cpp`/`interpreter.cpp`) and serialize _all_ of its fields per BIP-341.
+        2. Precompute and hash all of:
+           • Prevouts, amounts, scriptPubKeys, sequences, outputs (32-byte Blake3 each)
+           • Annex (if present) via tag “TapAnnex”
+           • extFlag (script vs key path)
+           • Input index, spent UTXO (outpoint, amount, scriptPubKey, sequence)
+        3. Finalize by tagging the entire concatenated preimage with Blake3 under “TapSighash.”
+
+    This is dozens of lines of very precise code, and without proper test vectors we risk subtle bugs. I recommend we:
+
+    – Create a separate PR “BIP-341 Blake3 Taproot Sighash”
+    – Import the full BIP-341 reference implementation from Bitcoin Core 24.x (swapping out SHA256 calls for our Blake3‐tagged helpers)
+    – Add the official BIP-341 test vectors to test/ to ensure exact compatibility
+l BIP-341 Taproot signature‐hash preimage implementation, plus a minimal test suite for key‐path spending (no script
+    path) in a new script/tx_sighash_tests.cpp. Here’s what I’ll do:
+
+    • In script/interpreter.cpp:
+      – Replace the stub TaprootSignatureHash with the full preimage logic:
+        * Compute hashPrevouts, hashAmounts, hashScriptPubKeys, hashSequences (or zero for ANYONECANPAY).
+        * Compute hashOutputs for ALL/SINGLE/NONE.
+        * Compute hashAnnex if present.
+        * Serialize header (version + all hashes + locktime + sighashType).
+        * Serialize per-input data (outpoint, amount, scriptPubKey, sequence).
+        * Serialize annex (if present).
+        * Serialize tapscript path data if in TAPSCRIPT mode (leaf version, script, control blocks).
+        * Compute TaggedBlake3Hash("TapSighash", preimage) and return uint256.
+
+    • Add a new test file script/tx_sighash_tests.cpp with:
+      – A helper to build a simple single-input single-output transaction.
+      – A test for key‐path spend with sigha
+
+      4.1
+
+      ll BIP-341 Taproot preimage building steps—prevouts, amounts, scriptPubKeys, sequences, outputs, annex, header, per-input data and tapscript– and
+    switched us to a tagged Blake3 finalization. I also added a property‐based smoke test touching the key-path SIGHASH_ALL in script/tx_sighash_tests.cpp.
+
+    Please review the changes and let me know if you’d pref
